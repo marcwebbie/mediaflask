@@ -67,7 +67,7 @@ def download(title, name_to_save, url):
     urllib.request.urlretrieve(url, name_to_save, reporthook=rh)
 
 
-def info(url):
+def info(url, reporthook):
     import sys
     import shlex
     import subprocess

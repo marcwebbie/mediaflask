@@ -33,3 +33,11 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Database and files
+*.db
+*.mp4
+*.mp3
+*.flv
+*.ogg
+*.aac
