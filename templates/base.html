@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="../../assets/ico/favicon.png">
+
+    <title>{% block title %}No title{% endblock title %}</title>
+
+    <!-- Chang URLs to wherever Video.js files will be hosted -->
+    <link href="{{ url_for('static', filename='css/video-js.css') }}" rel="stylesheet" type="text/css">
+    <!-- video.js must be in the <head> for older IEs to work. -->
+    <script src="{{ url_for('static', filename='js/video.js') }}"></script>
+    <!-- Le styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youpymp3.css') }}" >
+    <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}" >
+    <style type="text/css">
+      body {
+        padding-top: 70px;
+        padding-bottom: 50px;
+      }
+
+      .navbar-fixed-top {
+        padding-top: 0px;
+        padding-bottom: 0px;
+      }
+    </style>
+    {% block extra_head %}
+
+    {% endblock extra_head %}
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../../assets/js/html5shiv.js"></script>
+      <script src="../../assets/js/respond.min.js"></script>
+    <![endif]-->
+
+  </head>
+
+
+  <body>
+    <div class="navbar-simple navbar-fixed-top">
+      <div class="container">
+        <ul class="nav nav-tabs">
+          <!-- <li class="navbar-btn"><a class="navbar-brand" href="#">Youpymp3</a></li> -->
+          <li class="navbar-btn"><a href="#" id="homepage">Playlists</a></li>
+          <!-- <li class="navbar-btn"><a href="#">Two</a></li> -->
+          <li class="dropdown pull-right navbar-btn">
+            <a class="dropdown-toggle btn" data-toggle="dropdown" href="#"><i class="icon-user-md"></i> Sign in <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Account</a></li>
+              <li><a href="#">Sign out</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div> 
+
+    <!--     <div class="container"> -->
+    {% block content %}
+      <div class='row'>
+        <form method="POST" action="[CHANGE ACTION]" accept-charset="UTF-8">
+          <div class='span3 input-append' style="margin-top:20%; margin-left:30%">
+            <input class="span2" style="width:400px;" type="text" placeholder="buscar...">
+          </div>
+        </form>
+      </div>
+    {% endblock content %}
+    <!--     </div> -->
+  
+    <!-- Le javascript
+    ==================================================-->
+    <script src="{{ url_for('static', filename='js/jquery-1.9.1.min.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}" ></script>
+
+    {% block scripts %}
+    <script>
+    </script>
+    {% endblock scripts %}
+
+  </body>
+</html>

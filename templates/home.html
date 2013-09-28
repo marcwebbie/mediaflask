@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}YouPymp3 - Download Youtube mp3{% endblock title %}
+ 
+{% block extra_head %}
+  <style>
+    .input-xxlarge {
+      width: 600px  !important;
+      height: 44px;
+      margin-bottom: 10px !important;
+      line-height: 30px !important;
+      padding: 11px 19px !important;
+      font-size: 17.5px !important;
+    }
+
+    .container-full {
+      margin: 0 auto;
+      width: 100%;
+      min-height:100%;
+      background-color:#ffFFFF;
+      color:#6D1717;
+      overflow:hidden;
+    }
+
+    .container-full a {
+      color:#6D1717;
+      text-decoration:none;
+    }
+
+    .input-group {
+      width: 100% !important;
+    }
+
+    .media-object{
+      height: 150px !important ;
+      width: 150px !important;
+    }
+
+    .thumbnail {
+      display: block;
+      padding: 4px;
+      line-height: 20px;
+      border: 1px solid #ddd;
+      width: 200px;
+      height: 200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+{% endblock extra_head %}
+
+{% block content %}
+<div class="container-full">
+  <div class="row">
+    <div class="col-md-offset-3 col-lg-6 text-center v-center">
+      <h1>Video to mp3</h1>
+      <p class="lead">Convert your favorite online videos to mp3 automatically.</p>
+      
+      <br><br>
+
+      <form id="download_form" class="col-lg-12" action="#" method="POST">
+        <div class="input-group" style="width:340px;text-align:center;margin:0 auto;">
+          <input id="input_box" name="url" type="text" class="form-control input-lg" title="Copy and paste the videos url and press the OK button" placeholder="http://<type video url here>">
+          <span class="input-group-btn">
+            <button id="button_convert" type="submit" href="#" class="btn btn-success btn-lg"  rel="popover">Convert</button>
+            <button id="button_check" type="submit" href="#" class="btn btn-primary btn-lg">Check</button>
+          </span>
+          <a href="#" id="to_replace"></a>
+        </div>
+      </form>
+    </div> 
+  </div> <!-- /row -->
+
+  <div class="row">
+    <br />
+    <div id="message_div" class="col-lg-12 text-center v-center">
+      {% for error in error_list %}
+        <div class="alert alert-danger">{{ error }}</div> 
+      {% endfor %}
+    </div>
+
+    <div id="audio_div" class="col-lg-12 text-center v-center">
+<!--         <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="264"
+            poster="http://video-js.zencoder.com/oceans-clip.png"
+            data-setup="{}">
+            <source class="vsrc" src="#" type='video/mp4' /> -->
+<!--             <source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm' />
+            <source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg' /> -->
+            <!-- <track kind="captions" src="demo.captions.vtt" srclang="en" label="English"></track> -->
+<!--         </video> -->
+        <video width="640" height="1" controls preload="auto">
+            <source src="#" type="video/mp4">
+        </video> 
+        <audio controls preload="auto" width="640" height="264">  
+            <source id="source_audio" src="#" type='#' />  
+        </audio>
+    </div>
+
+
+  </div> <!-- /row -->
+  <br>
+
+  <div class="row">
+    <div class="col-lg-12 text-center v-center" style="font-size:39pt;">
+      <a href="#"><i class="icon-google-plus"></i></a> <a href="#"><i class="icon-facebook"></i></a>  <a href="#"><i class="icon-twitter"></i></a> <a href="#"><i class="icon-github"></i></a> <a href="#"><i class="icon-pinterest"></i></a>
+    </div>
+  </div> <!-- /row -->
+
+  <br><br><br><br><br>
+
+</div> <!-- /container full -->
+
+<div class="container">
+  <hr>  
+  <div class="row">
+    <div class="col-lg-12">
+      <br><br>
+      <p class="text-center">Built by <a href="http://www.github.com/marcwebbie">@Marcwebbie</a>&nbsp; ©Copyright 2013 </p>
+      <br><br>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+
+{% block scripts %}
+<script>
+    function get_initial_state() {
+        $('#input_box').val();
+        // $('.popover').each(function() {
+        //     $(this).hide('slow');
+        // });
+        $('#button_check').popover({}).hide();
+        $('#button_check').show().html('Check');
+        $('#button_convert').hide().html('Download');
+
+        $('#message_div').html("");  
+        $("#audio_div").hide(); 
+        $("video").hide();
+    }
+
+    $("#button_check").click(function(ev) { // catch the form's submit event
+        ev.preventDefault();
+        $('#message_div').html("");  
+        $('#button_convert').html('<i class="icon-spinner icon-spin icon-large icon-1x"></i>');
+        var target = "{{ url_for('check') }}"
+        $.ajax({ // create an AJAX call...
+            data: $('#download_form').serialize(), // get the form data
+            type: $('#download_form').attr("method"),
+            url: target
+        }, "json")
+        .done(function(data) {
+                     // Show audio player
+
+
+            $("source").attr("type", 'video/' + data.ext);
+            $("source").attr("src", data.url);
+            $("video").show();
+            $("#source_audio").attr("type", 'audio/' + data.ext);
+            $("#source_audio").attr("src", data.url);
+            $("#audio_div").show();
+
+            javascript: console.log("[DONE] Sucess getting video info: " +data.url);
+            javascript: console.log("[DONE] Video ext: " + data.ext);
+
+ 
+
+            message_html = "<div class='alert alert-success'>Download: <a href='" + data.url + "'>" + data.title + "</a></div>";
+            $('#message_div').html(message_html);
+            $('#button_convert').html("Download");         
+        })
+        .fail( function (data) {
+            javascript: console.log("Failed to convert video: " + data)
+            $('#button_convert').html("Download"); 
+            message_html = "<div class='alert alert-danger'><h2>Failed to convert this video.</h2></div>";
+            $('#message_div').html(message_html);
+        });  
+        return false;
+    });
+
+    $("#input_box").bind('change paste keyup', function() {
+        get_initial_state();
+    });
+
+    // Main code run when the document is ready
+    $(document).ready(function() {
+        get_initial_state();
+    });
+</script>
+{% endblock scripts %}
+
