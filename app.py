@@ -6,7 +6,7 @@ import urllib.request
 import sys
 import time
 
-from flask import Flask, Response, render_template, redirect, url_for, request
+from flask import Flask, Response, render_template, redirect, url_for, request, send_file
 from flask import g
 from peewee import *
 from werkzeug.contrib.cache import SimpleCache
@@ -31,8 +31,8 @@ class BaseModel(Model):
 
 class Audiofile(BaseModel):
     uid = TextField(primary_key=True, default=lambda: str(uuid4()))
-    json = TextField(null=True)
-    dl_progress = IntegerField(default=0)
+    raw_url = TextField()
+    extension = TextField()
     dl_date = DateTimeField(default=datetime.datetime.now)
 
     class Meta:
@@ -125,7 +125,9 @@ def check():
         url = request.form["url"]
         info_json = info(url)
         info_dict = json.loads(info_json)
-        af = Audiofile.create(url=url, json=info_json)
+        ext = info_dict['ext']
+        raw_url = info_dict['url']
+        af = Audiofile.create(extension=ext, raw_url=raw_url)
 
         # add uid to dict for json
         info_dict['uid'] = af.uid
@@ -139,16 +141,24 @@ def progress(uid):
     return Response(cache.get(uid), mimetype='text/plain')
 
 
-@app.route("/download/<uid>")
-def download(uid):
+@app.route("/convert/<uid>")
+def convert(uid):
     af = Audiofile.select().where(Audiofile.uid == uid).get()
-    info_dict = json.loads(af.json)
-    url = info_dict['url']
-    ext = info_dict['ext']
+    url = af.raw_url
+    ext = af.extension
     disk_path = "{}.{}".format(uid, ext)
 
     save_video(af, url, disk_path, ext)
     return Response(url_for("progress", uid=uid), mimetype='text/plain')
+
+
+@app.route("/download/<uid>")
+def download(uid):
+    af = Audiofile.select().where(Audiofile.uid == uid).get()
+    filename = "{}.{}".format(uid, af.extension)
+    return send_file(filename, as_attachment=True, mimetype='video/mpeg')
+    # return Response("Supposed to download: {}.{}".format(uid, af.extension),
+    # mimetype='text/plain')
 
 
 if __name__ == "__main__":

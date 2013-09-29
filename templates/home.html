@@ -75,17 +75,18 @@
     <br />
     <div id="message_div" class="col-lg-12 text-center v-center" style="font-size:20pt;">
         <div id="success_div" class='alert alert-success'>
-            <a id="download_button" href="{{ url_for('download', uid='') }}"><button class='btn btn-primary btn-lg'><i class='icon-music'></i> download</button></a>
+            <a id="convert_button" href="{{ url_for('convert', uid='') }}"><button class='btn btn-primary btn-lg'><i class='icon-music'></i> convert</button></a>
+            <a id="download_button" href="{{ url_for('download', uid='') }}"><button class='btn btn-primary btn-lg'><i class='icon-download'></i> download</button></a>
         </div>
         {% for error in error_list %}
             <div class="alert alert-danger">{{ error }}</div> 
         {% endfor %}
-    </div>
 
-    <div class="col-lg-2 col-md-offset-5 text-center v-center" style="font-size:20pt;">
-        <div class="progress">
-            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                <span class="sr-only">60% Complete</span>
+        <div id="progress_div" class="col-lg-2 col-md-offset-5 text-center v-center" style="font-size:20pt;">
+            <div class="progress progress-striped active">
+                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                    <span class="sr-only">60% Complete</span>
+                </div>
             </div>
         </div>
     </div>
@@ -145,34 +146,80 @@
         $('#success_div').hide();  
         $("#audio_div").hide(); 
         $("video").hide();
+        $('#progress_div').hide(); 
+
+
+        $('#convert_button').hide();     
+        $('#download_button').hide();
     }
 
-    $("#download_button").click(function(ev) {
-        ev.preventDefault();
-        var dl_url = $("#download_button").attr("href")
+    function get_download_button(uid){
+        $("#download_button").attr("href", $("#download_button").attr("href") + uid);
+        $("#download_button").show();
 
-        $.get( dl_url, function( dl_data ) {
-            var get_progress_interval = 5000;
-            setInterval(function() {
-                $.get( dl_data, function( progress_data ) {
-                    progress_percent = parseInt(progress_data)
-                    javascript: console.log("[DONE] progress: " + progress_percent + "%");
-                    $(".progress-bar").animate({ width: progress_percent+'%'}, 1);
-                });
+        $("#convert_button").hide();
+        
+        $("#success_div").show("fade-in");
+        $('#progress_div').hide(); 
+    }
+
+
+    function get_convert_button(uid){
+        $("#convert_button").attr("href", $("#convert_button").attr("href") + uid);
+        $("#convert_button").show();
+
+        $("#download_button").hide();
+
+        $("#success_div").show("fade-in");
+        $('#progress_div').hide(); 
+    }
+
+
+    function get_progress(progress_url) {
+        $('#success_div').hide(); 
+        $('#progress_div').show(); 
+
+        var my_timer = setInterval(function() {
+            $.get( progress_url, function( progress_data ) {
+                var progress_percent = parseInt(progress_data)
+                javascript: console.log("[DONE] progress: " + progress_percent + "%");
+                $(".progress-bar").animate({ width: progress_percent+'%'}, 1);
 
                 if (parseInt(progress_percent) >= 100){
                     javascript: console.log("Clearing interval...");
-                    clearInterval(get_progress_interval);
+                    clearInterval(my_timer);
+                    get_download_button();
                 }
-            }, get_progress_interval);
-        });
+            })
+            .fail( function (data) {
+                $('#button_check').show().html('Check');
+                javascript: console.log("Failed to update download progress: " + data)
+                message_html = "<div class='alert alert-danger'><h2>Failed to update download progress bar.</h2></div>";
+                $('#message_div').html(message_html);
+            });
+        }, 5000);  
+    }
 
+    $("#convert_button").click(function(ev) {
+        ev.preventDefault();
+        var dl_url = $("#convert_button").attr("href")
+
+        $.get( dl_url, function( dl_data ) {
+            get_progress(dl_data);
+        }).fail( function (data) {
+            $('#button_check').show().html('Check');
+            javascript: console.log("Failed to convert video: " + data)
+            message_html = "<div class='alert alert-danger'><h2>Failed to convert video.</h2></div>";
+            $('#message_div').html(message_html);
+        });
+        return false;
     });
 
     $("#button_check").click(function(ev) { // catch the form's submit event
         ev.preventDefault();
         // $('#message_div').html("");  
         $('#button_check').html('<i class="icon-spinner icon-spin icon-large icon-1x"></i>');
+
         var target = "{{ url_for('check') }}"
         $.ajax({ // create an AJAX call...
             data: $('#download_form').serialize(), // get the form data
@@ -180,35 +227,25 @@
             url: target
         }, "json")
         .done(function(data) {
-            javascript: console.log("[DONE] Sucess getting video info: " +data.url);
+            $('#button_check').show().html('Check');
+            javascript: console.log("[DONE] Sucess getting video info: " + data.url);
             javascript: console.log("[DONE] Video ext: " + data.ext);
             javascript: console.log("[DONE] Video uid: " + data.uid);
-            javascript: console.log("[DONE] Video uid: " + "<a href='{{ url_for('download', uid='') }}'" + data.uid);
+            javascript: console.log("[DONE] Video uid: " + "<a href='{{ url_for('convert', uid='') }}'" + data.uid);
 
-            // var dl_link = "<a href='{{ url_for('download', uid='') }}" + data.uid + "'><button class='btn btn-primary btn-lg'><i class='icon-music'></i> download</button></a>";
+            get_convert_button(data.uid);
             // $("#success_div").html("")
             // $("#success_div").append(dl_link);
-            $("#download_button").attr("href", $("#download_button").attr("href") + data.uid);
-            $("#success_div").show("fade-in");
-            $('#button_check').show().html('Check');
-            $('#button_convert').html("Download"); 
-
-            // update progressbar
-            // for (var i = 0; i < 10; i++) {
-            //     $("#success_div").append("delay: " + i).delay(800);
-            // };
-            // $.get( "ajax/test.html", function( data ) {
-            //     $( ".result" ).html( data );
-            //     alert( "Load was performed." );
-            // });
-            // setInterval(function() {
-            //    $(".progress-bar").animate({ width: counter+'%'}, 1);
-            // },  1000);
+            // $("#download_button").attr("href", $("#download_button").attr("href") + data.uid);
+            // $("#success_div").show("fade-in");
+            // $('#button_check').show().html('Check');
+            // $('#button_convert').html("Download"); 
         })
         .fail( function (data) {
-            javascript: console.log("Failed to convert video: " + data)
+            $('#button_check').show().html('Check');
+            javascript: console.log("Failed to get video info: " + data)
             $('#button_convert').html("Download"); 
-            message_html = "<div class='alert alert-danger'><h2>Failed to convert this video.</h2></div>";
+            message_html = "<div class='alert alert-danger'><h2>Failed to fetch video info.</h2></div>";
             $('#message_div').html(message_html);
         });  
         return false;
