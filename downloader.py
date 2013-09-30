@@ -1,100 +1,103 @@
+import json
+import os
 import sys
+import unittest
 import urllib
-import time
+
+import youtube_dl.YoutubeDL
+import youtube_dl.extractor
+from youtube_dl.utils import *
+from youtube_dl.PostProcessor import FFmpegExtractAudioPP
 
 
-class Reporter(object):
+# sys.path.append(os.path.dirname(os.path.abspath(youtube_dl.__file__)))
 
-    def __init__(self, time_debut):
-        self.initial = time_debut
-
-    def humanize_bytes(self, byt, precision=1):
-        abbrevs = (
-            (1 << 50, 'PB'),
-            (1 << 40, 'TB'),
-            (1 << 30, 'GB'),
-            (1 << 20, 'MB'),
-            (1 << 10, 'kB'),
-            (1, 'bytes')
-        )
-        if byt == 1:
-            return '1 byte'
-        for factor, suffix in abbrevs:
-            if byt >= factor:
-                break
-        return '%.*f %s' % (precision, byt / factor, suffix)
-
-    def __call__(self, morceaux, taille_morceau, taille_totale):
-        time_now = time.time()
-        pourcent = (taille_morceau * morceaux) * 100. / taille_totale
-        diff = int(time_now - self.initial)
-        vitesse = (taille_morceau * morceaux / diff) if diff else diff
-        # sys.stdout.write(
-        #     "\r[%3.2f%%] %s> %100s [%s b/s]" % (
-        #         pourcent,
-        #         "-" * int(
-        #     pourcent),
-        #         '',
-        #         self.humanize_bytes(
-        #         vitesse)))
-        sys.stdout.write("\r[{}%]".format(int(pourcent)))
-        sys.stdout.flush()
-
-# class video_downloader(object):
-#     def __init__(self, options_passed):
-#         ''' Contructor needs options as a list'''
-#         self.opts = options_passed
-#     def download(self, title, name_to_save, url):
-#         print title, '->', name_to_save
-#         reporthook = Reporter(time.time())
-#         urllib.urlretrieve(url, name_to_save, reporthook)
-#     def extract_info(self, link, handler):
-# get video raw info
-#         video_raw_info = handler(link)
-# Use the raw info to open a file for writing
-#         url = video_raw_info['url']
-#         title = video_raw_info['title']
-#         video_format = video_raw_info['extension']
-#         video_path = video_raw_info['video_path']
-#         name_to_save = ''
-#         self.download(title, name_to_save, url)
+# General configuration(from __init__, not very elegant...)
+# jar = compat_cookiejar.CookieJar()
+# cookie_processor = compat_urllib_request.HTTPCookieProcessor(jar)
+# proxy_handler = compat_urllib_request.ProxyHandler()
+# opener = compat_urllib_request.build_opener(
+#     proxy_handler, cookie_processor, YoutubeDLHandler())
+# compat_urllib_request.install_opener(opener)
 
 
-def download(title, name_to_save, url):
-    import urllib.request
-    # print title, '->', name_to_save
-    rh = Reporter(time.time())
-    urllib.request.urlretrieve(url, name_to_save, reporthook=rh)
+params = {
+    "consoletitle": False,
+    "continuedl": True,
+    "forcedescription": False,
+    "forcefilename": False,
+    "forceformat": False,
+    "forcethumbnail": False,
+    "forcetitle": False,
+    "forceurl": False,
+    "format": None,
+    "format_limit": None,
+    "ignoreerrors": False,
+    "listformats": None,
+    "logtostderr": False,
+    "matchtitle": None,
+    "max_downloads": None,
+    "nooverwrites": False,
+    "nopart": False,
+    "noprogress": False,
+    "outtmpl": "%(id)s.%(ext)s",
+    "password": None,
+    "playlistend": -1,
+    "playliststart": 1,
+    "prefer_free_formats": False,
+    "quiet": False,
+    "ratelimit": None,
+    "rejecttitle": None,
+    "retries": 10,
+    "simulate": False,
+    "skip_download": False,
+    "subtitleslang": None,
+    "subtitlesformat": "srt",
+    "test": False,
+    "updatetime": True,
+    "usenetrc": False,
+    "username": None,
+    "verbose": True,
+    "writedescription": False,
+    "writeinfojson": False,
+    "writesubtitles": False,
+    "allsubtitles": False,
+    "listssubtitles": False
+}
 
 
-def info(url, reporthook):
-    import sys
-    import shlex
-    import subprocess
+# def update_progress(morceaux, taille_morceau, taille_totale, uid=None):
+#     time_now = time.time()
+#     pourcent = (taille_morceau * morceaux) * 100. / taille_totale
+#     sys.stderr.write("percent: {}\n".format(str(pourcent)))
+#     cache.set(uid, str(pourcent))
+
+from decorators import async
+from functools import partial
+
+
+@async
+def download(url, disk_path, *, reporthook=None):
+    name_to_save = disk_path
+    if reporthook:
+        urllib.request.urlretrieve(url, name_to_save, reporthook=reporthook)
+    else:
+        urllib.request.urlretrieve(url, name_to_save, reporthook=reporthook)
+
+
+def info(url):
     from tempfile import NamedTemporaryFile
-    import os
     import re
-    import json
 
-    with NamedTemporaryFile('w+t', suffix='.info.json') as f:
-        cmd_dl = "youtube-dl {} --write-info-json --skip-download -f mp4 -q -o {}".format(
-            url, re.sub("\.info\.json", "", f.name))
-        with subprocess.Popen(shlex.split(cmd_dl)) as ydl:
-            pass
-        # info = json.loads(f.read())
-        info = f.read()
-        # import pdb
-        # pdb.set_trace()
+    params['quiet'] = True
+    params['writeinfojson'] = True
+    params['skip_download'] = True
 
+    with NamedTemporaryFile('w+t', suffix='.info.json') as json_file:
+        params['outtmpl'] = re.sub("\.info\.json", "", json_file.name)
+        ydl = youtube_dl.YoutubeDL(params)
+        ydl.add_default_info_extractors()
+        ydl.download([url])
+
+        info = json_file.read()
         return info
-        # print("downloading: {}...".format(info['fulltitle']))
-        # title = info['fulltitle']
-        # raw_url = info['url']
-
-        # Create temp file for download
-        # with NamedTemporaryFile('w+t') as dl_file:
-        #     download(title, dl_file.name, raw_url)
-
-if __name__ == "__main__":
-    url = sys.argv[1]
-    print(info(url))

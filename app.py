@@ -1,19 +1,33 @@
 import datetime
+from functools import partial
+import glob
 import json
 import os
-from uuid import uuid4
-import urllib.request
 import sys
 import time
+import urllib.request
+from uuid import uuid4
 
 from flask import Flask, Response, render_template, redirect, url_for, request, send_file
 from flask import g
 from peewee import *
 from werkzeug.contrib.cache import SimpleCache
+from pydub import AudioSegment
 
+from downloader import download as save_video
+from downloader import info
 
 cache = SimpleCache()
+# messages on cache must be formated like that:
+# {
+#     'uid': '5151-5156-15115615-1515',
+#     'dl_progress': 10,
+#     'convert_progress': 0,
+# 'status': 'converting',   # dowloading, converting, done
+# }
 
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media/')
 DATABASE = 'mediaflask.db'
 DEBUG = True
 SECRET_KEY = 'hin6bab8ge25*r=x&amp;+5$0kn=-#log$pt^#@vrqjld!^2ci@g*b'
@@ -33,71 +47,63 @@ class Audiofile(BaseModel):
     uid = TextField(primary_key=True, default=lambda: str(uuid4()))
     raw_url = TextField()
     extension = TextField()
-    dl_date = DateTimeField(default=datetime.datetime.now)
+    disk_path = TextField(default="")
 
     class Meta:
-        order_by = ('-dl_date',)
+        order_by = ('-extension',)
 
-    @property
-    def disk_path():
-        return
+    def export(self, output_format='mp3'):
+        af_audio_path = os.path.join(MEDIA_ROOT, "{}.{}".format(
+            self.disk_path.strip('.' + self.extension), output_format))
+        AudioSegment.from_file(self.disk_path).export(af_audio_path, format=output_format)
+        return af_audio_path
 
 
 def update_progress(morceaux, taille_morceau, taille_totale, uid=None):
-    time_now = time.time()
     pourcent = (taille_morceau * morceaux) * 100. / taille_totale
     sys.stderr.write("percent: {}\n".format(str(pourcent)))
-    cache.set(uid, str(pourcent))
+    if uid:
+        json_report = {
+            'uid': uid,
+            'dl_progress': pourcent,
+            'convert_progress': 0,
+            'status': 'downloading',   # dowloading, converting, done
+        }
+        cache.set(uid, json.dumps(json_report))
 
-from decorators import async
-from functools import partial
-
-
-@async
-def save_video(audiofile, url, disk_path, extension):
-    name_to_save = disk_path
-    uid = audiofile.uid
-    rh = partial(update_progress, uid=uid)
-    urllib.request.urlretrieve(url, name_to_save, reporthook=rh)
-    audiofile.dl_date = datetime.datetime.now()
-    audiofile.save()
+# from decorators import async
+# from functools import partial
 
 
-def info(url):
-    import sys
-    import shlex
-    import subprocess
-    from tempfile import NamedTemporaryFile
-    import os
-    import re
-    import json
+# @async
+# def save_video(audiofile_uid, url, disk_path, extension):
+#     name_to_save = disk_path
+#     rh = partial(update_progress, uid=audiofile_uid)
+#     urllib.request.urlretrieve(url, name_to_save, reporthook=rh)
 
-    with NamedTemporaryFile('w+t', suffix='.info.json') as f:
-        cmd_dl = "youtube-dl {} --write-info-json --skip-download -f mp4 -q -o {}".format(
-            url, re.sub("\.info\.json", "", f.name))
-        with subprocess.Popen(shlex.split(cmd_dl)) as ydl:
-            pass
-        info = f.read()
-        return info
+
+# def info(url):
+#     import sys
+#     import shlex
+#     import subprocess
+#     from tempfile import NamedTemporaryFile
+#     import os
+#     import re
+#     import json
+
+#     with NamedTemporaryFile('w+t', suffix='.info.json') as f:
+#         cmd_dl = "youtube-dl {} --write-info-json --skip-download -f mp4 -q -o {}".format(
+#             url, re.sub("\.info\.json", "", f.name))
+#         with subprocess.Popen(shlex.split(cmd_dl)) as ydl:
+#             pass
+#         info = f.read()
+#         return info
 
 
 def create_tables():
     database.connect()
     Audiofile.create_table()
 
-
-def fetch_json_info():
-    pass
-
-
-def fake_download(audiofile, ext):
-    import time
-    import sys
-    percent = 0
-    while percent < 100:
-        sys.stderr.write(str(percent))
-        percent += 5
-        time.sleep(1)
 
 app.secret_key = 'development key'
 
@@ -138,32 +144,46 @@ def check():
 
 @app.route("/progress/<uid>")
 def progress(uid):
-    return Response(cache.get(uid), mimetype='text/plain')
+    info_dict = json.loads(cache.get(uid))
+    # if int(info_dict['dl_progress']) >= 100:
+    #     info_dict['status'] = 'done'
+    #     json_info = json.dumps(info_dict)
+    #     return Response(json_info, mimetype='application/json')
+    return Response(cache.get(uid), mimetype='application/json')
 
 
-@app.route("/convert/<uid>")
+@app.route("/convert/<uid>", methods=['GET'])
 def convert(uid):
     af = Audiofile.select().where(Audiofile.uid == uid).get()
+    audiofile_uid = af.uid
     url = af.raw_url
     ext = af.extension
-    disk_path = "{}.{}".format(uid, ext)
+    af.disk_path = os.path.join(MEDIA_ROOT, "{}.{}".format(uid, ext))
+    af.save()
 
-    save_video(af, url, disk_path, ext)
+    rh = partial(update_progress, uid=audiofile_uid)
+    save_video(url, af.disk_path, reporthook=rh)
     return Response(url_for("progress", uid=uid), mimetype='text/plain')
 
 
 @app.route("/download/<uid>")
 def download(uid):
     af = Audiofile.select().where(Audiofile.uid == uid).get()
-    filename = "{}.{}".format(uid, af.extension)
-    return send_file(filename, as_attachment=True, mimetype='video/mpeg')
-    # return Response("Supposed to download: {}.{}".format(uid, af.extension),
-    # mimetype='text/plain')
+    af_audio_path = af.export('mp3')
+    return send_file(af_audio_path, as_attachment=True, mimetype='video/mpeg')
 
+
+def clear_server():
+    if os.path.exists(DATABASE):
+        print("Supprimer la base de données...")
+        os.remove(DATABASE)
+    print("Supprimer fichiers multimedia...")
+    for f in glob.glob(os.path.join(MEDIA_ROOT, '*')):
+        os.remove(f)
 
 if __name__ == "__main__":
-    if not os.path.exists(DATABASE):
-        print("Creation de la base de données...")
-        create_tables()
-        print("Base de données crée...")
+    clear_server()
+    print("Creation de la base de données...")
+    create_tables()
+    print("Base de données crée...")
     app.run()

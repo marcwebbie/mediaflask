@@ -181,14 +181,14 @@
 
         var my_timer = setInterval(function() {
             $.get( progress_url, function( progress_data ) {
-                var progress_percent = parseInt(progress_data)
+                var progress_percent = parseInt(progress_data.dl_progress)
                 javascript: console.log("[DONE] progress: " + progress_percent + "%");
                 $(".progress-bar").animate({ width: progress_percent+'%'}, 1);
 
                 if (parseInt(progress_percent) >= 100){
                     javascript: console.log("Clearing interval...");
                     clearInterval(my_timer);
-                    get_download_button();
+                    get_download_button(progress_data.uid);
                 }
             })
             .fail( function (data) {
