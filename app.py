@@ -57,6 +57,8 @@ class Audiofile(BaseModel):
         af_audio_path = os.path.join(MEDIA_ROOT, "{}.{}".format(
             self.disk_path.strip('.' + self.extension), output_format))
         AudioSegment.from_file(self.disk_path).export(af_audio_path, format=output_format)
+        os.remove(self.disk_path)
+        self.disk_path = af_audio_path
         return af_audio_path
 
 
@@ -137,10 +139,11 @@ def convert(uid):
     return Response(url_for("progress", uid=uid), mimetype='text/plain')
 
 
-@app.route("/download/<uid>")
-def download(uid):
+@app.route("/download")
+@app.route("/download/<output_format>/<uid>")
+def download(uid=None, output_format=None):
     af = Audiofile.select().where(Audiofile.uid == uid).get()
-    af_audio_path = af.export('mp3')
+    af_audio_path = af.export(output_format)
     return send_file(af_audio_path, as_attachment=True, mimetype='video/mpeg')
 
 

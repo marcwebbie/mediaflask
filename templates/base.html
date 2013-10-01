@@ -14,6 +14,7 @@
     <!-- video.js must be in the <head> for older IEs to work. -->
     <script src="{{ url_for('static', filename='js/video.js') }}"></script>
     <!-- Le styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-select.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/youpymp3.css') }}" >
     <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}" >
     <style type="text/css">
@@ -73,7 +74,10 @@
     ==================================================-->
     <script src="{{ url_for('static', filename='js/jquery-1.9.1.min.js') }}" ></script>
     <script src="{{ url_for('static', filename='js/bootstrap.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-select.js') }}"></script>
+    <script type="text/javascript">
 
+    </script>
     {% block scripts %}
     <script>
     </script>

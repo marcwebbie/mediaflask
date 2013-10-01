@@ -51,69 +51,81 @@
 
 {% block content %}
 <div class="container-full">
-  <div class="row">
-    <div class="col-md-offset-3 col-lg-6 text-center v-center">
-      <h1>Video to mp3</h1>
-      <p class="lead">Convert your favorite online videos to mp3 automatically.</p>
-      
-      <br><br>
+    <div class="row">
+        <div class="col-md-offset-3 col-lg-6 text-center v-center">
+            <h1>Video to mp3</h1>
+            <p class="lead">Convert your favorite online videos to mp3 automatically.</p>
 
-      <form id="download_form" class="col-lg-12" action="#" method="POST">
-        <div class="input-group" style="width:340px;text-align:center;margin:0 auto;">
-          <input id="input_box" name="url" type="text" class="form-control input-lg" title="Copy and paste the videos url and press the OK button" placeholder="http://<type video url here>">
-          <span class="input-group-btn">
-            <!-- <button id="button_convert" type="submit" href="#" class="btn btn-success btn-lg"  rel="popover">Convert</button> -->
-            <button id="button_check" type="submit" href="#" class="btn btn-primary btn-lg">Check</button>
-          </span>
-          <a href="#" id="to_replace"></a>
+            <br><br>
+
+            <form id="download_form" class="col-lg-12" action="#" method="POST">
+                <div class="input-group" style="width:340px;text-align:center;margin:0 auto;">
+                    <input id="input_box" name="url" type="text" class="form-control input-lg" title="Copy and paste the videos url and press the OK button" placeholder="http://<type video url here>">
+                    <span class="input-group-btn">
+                        <!-- <button id="button_convert" type="submit" href="#" class="btn btn-success btn-lg"  rel="popover">Convert</button> -->
+                        <button id="button_check" type="submit" href="#" class="btn btn-primary btn-lg">Check</button>
+                    </span>
+                    <a href="#" id="to_replace"></a>
+                </div>
+            </form>
+        </div> 
+    </div> <!-- /row -->
+
+    <div class="row">
+        <br />
+        <div id="other_info_div" class="col-lg-2 col-md-offset-5 text-center v-center">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Panel title</h3>
+                </div>
+                <div class="panel-body">
+                    Panel content
+                </div>
+            </div>
+<!--             <div id="audio_div" class="col-lg-12 text-center v-center">
+                <video id="video_player" width="100%" height="1" controls preload="auto">
+                    <source src="//example.com" type="video/mp4">
+                </video> 
+                <audio controls preload="auto" width="100%" height="50px">  
+                    <source id="source_audio" src="//example.com" type='audio/mpeg' />  
+                </audio>
+            </div> -->
         </div>
-      </form>
-    </div> 
-  </div> <!-- /row -->
+    </div> <!-- /row -->
 
-  <div class="row">
-    <br />
-    <div id="message_div" class="col-lg-12 text-center v-center" style="font-size:20pt;">
-        <div id="success_div" class='alert alert-success'>
-            <a id="convert_button" href="{{ url_for('convert', uid='') }}"><button class='btn btn-primary btn-lg'><i class='icon-music'></i> convert</button></a>
-            <a id="download_button" href="{{ url_for('download', uid='') }}"><button class='btn btn-primary btn-lg'><i class='icon-download'></i> download</button></a>
-        </div>
-        {% for error in error_list %}
-            <div class="alert alert-danger">{{ error }}</div> 
-        {% endfor %}
+    <div class="row">
+        <br />
 
-        <div id="progress_div" class="col-lg-2 col-md-offset-5 text-center v-center" style="font-size:20pt;">
-            <div class="progress progress-striped active">
-                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                    <span class="sr-only">60% Complete</span>
+        <div id="message_div" class="col-lg-12 text-center v-center" style="font-size:20pt;">
+            <div id="success_div" class='alert alert-success button-group'>
+                <a id="convert_button" href="{{ url_for('convert', uid='') }}"><button class='btn btn-primary btn-lg'><i class='icon-music'></i> convert</button></a>
+                <a id="format_select_div" style='height'>
+                    <select id="format_select_div" class="selectpicker bla bla bli" data-live-search="false">
+                        <option>mp3</option>
+                        <option>wav</option>
+                        <option>ogg</option>
+                    </select>
+                </a>
+                <a id="download_button" href="{{ url_for('download') }}">
+                    <button class='btn btn-primary btn-lg'><i class='icon-download'></i> download</button>
+                    <div></div>
+                </a>
+            </div>
+            {% for error in error_list %}
+                <div class="alert alert-danger">{{ error }}</div> 
+            {% endfor %}
+
+            <div id="progress_div" class="col-lg-2 col-md-offset-5 text-center v-center" style="font-size:20pt;">
+                <div class="progress progress-striped active">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                        <span class="sr-only">60% Complete</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div id="audio_div" class="col-lg-12 text-center v-center">
-            <video id="video_player" width="640" height="1" controls preload="auto">
-                <source src="#" type="video/mp4">
-            </video> 
-            <audio controls preload="auto" width="640" height="264">  
-                <source id="source_audio" src="#" type='#' />  
-            </audio>
-<!--         <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="264"
-            poster="http://video-js.zencoder.com/oceans-clip.png"
-            data-setup="{}">
-            <source class="vsrc" src="#" type='video/mp4' /> -->
-<!--             <source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm' />
-            <source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg' /> -->
-            <!-- <track kind="captions" src="demo.captions.vtt" srclang="en" label="English"></track> -->
-<!--         </video> -->
-
-        </div>
-    </div>
-
-
-
-
-  </div> <!-- /row -->
-  <br>
+    </div> <!-- /row -->
+    <br>
 
   <div class="row">
     <div class="col-lg-12 text-center v-center" style="font-size:39pt;">
@@ -140,6 +152,26 @@
 
 {% block scripts %}
 <script>
+    $(window).on('load', function () {
+
+        $('.selectpicker').selectpicker({
+            // 'selectedText': 'cat'
+            // style: 'btn btn-primary btn-lg'
+        });
+
+        // $('.selectpicker').selectpicker('hide');
+    });
+
+    // Main code run when the document is ready
+    $(document).ready(function() {
+        get_initial_state();
+    });
+
+    $('.selectpicker').on('change', function() {
+        // alert( $('.selectpicker').selectpicker('val') ); // or $(this).val()
+        $("#download_button").attr("href", "{{ url_for('download') }}" + '/' + $('.selectpicker').selectpicker('val') + '/' + $("#download_button").attr("title"));
+    });
+
     function get_initial_state() {
         $('#input_box').val();
         $('#button_check').popover({}).hide();
@@ -154,11 +186,16 @@
 
         $('#convert_button').hide();     
         $('#download_button').hide();
+        $('#format_select_div').hide();
+        $(".panel").hide();
     }
 
     function get_download_button(uid){
-        $("#download_button").attr("href", $("#download_button").attr("href") + uid);
+        var output_format = 'mp3';
+        // var target_url = $("#download_button").attr("href") + '/' + output_format + '/' + uid;
+        $("#download_button").attr("title", uid);
         $("#download_button").show();
+        $('#format_select_div').show();
 
         $("#convert_button").hide();
         
@@ -170,6 +207,8 @@
     function get_convert_button(uid){
         $("#convert_button").attr("href", $("#convert_button").attr("href") + uid);
         $("#convert_button").show();
+        $('#format_select_div').hide();
+        $(".panel").show();
 
         $("#download_button").hide();
 
@@ -243,6 +282,8 @@
 
             get_convert_button(data.uid);
             get_video_player(data.url);
+            $(".panel-title").text(data.stitle);
+            $(".panel-body").html("<img height='100%' width='100%' src='"+data.thumbnail+"'></img>");
             // $("#success_div").html("")
             // $("#success_div").append(dl_link);
             // $("#download_button").attr("href", $("#download_button").attr("href") + data.uid);
@@ -262,16 +303,6 @@
 
     $("#input_box").bind('change paste keyup', function() {
         get_initial_state();
-    });
-
-    // Main code run when the document is ready
-    $(document).ready(function() {
-        get_initial_state();
-        // var counter = 1;
-        // setInterval(function() {
-        //        $(".progress-bar").animate({ width: counter+'%'}, 1);
-        //     counter = counter + 1
-        // }, 1000);
     });
 </script>
 {% endblock scripts %}
