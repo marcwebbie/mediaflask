@@ -89,9 +89,14 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <div id="audio_div" class="col-lg-12 text-center v-center">
+        <div id="audio_div" class="col-lg-12 text-center v-center">
+            <video id="video_player" width="640" height="1" controls preload="auto">
+                <source src="#" type="video/mp4">
+            </video> 
+            <audio controls preload="auto" width="640" height="264">  
+                <source id="source_audio" src="#" type='#' />  
+            </audio>
 <!--         <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="264"
             poster="http://video-js.zencoder.com/oceans-clip.png"
             data-setup="{}">
@@ -100,13 +105,11 @@
             <source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg' /> -->
             <!-- <track kind="captions" src="demo.captions.vtt" srclang="en" label="English"></track> -->
 <!--         </video> -->
-        <video width="640" height="1" controls preload="auto">
-            <source src="#" type="video/mp4">
-        </video> 
-        <audio controls preload="auto" width="640" height="264">  
-            <source id="source_audio" src="#" type='#' />  
-        </audio>
+
+        </div>
     </div>
+
+
 
 
   </div> <!-- /row -->
@@ -175,6 +178,11 @@
     }
 
 
+    function get_video_player(url){
+        $('#audio_div').show();
+        $('#video_player source').attr('src', url);
+    }
+
     function get_progress(progress_url) {
         $('#success_div').hide(); 
         $('#progress_div').show(); 
@@ -234,6 +242,7 @@
             javascript: console.log("[DONE] Video uid: " + "<a href='{{ url_for('convert', uid='') }}'" + data.uid);
 
             get_convert_button(data.uid);
+            get_video_player(data.url);
             // $("#success_div").html("")
             // $("#success_div").append(dl_link);
             // $("#download_button").attr("href", $("#download_button").attr("href") + data.uid);

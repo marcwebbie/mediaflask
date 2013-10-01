@@ -9,18 +9,6 @@ import youtube_dl.extractor
 from youtube_dl.utils import *
 from youtube_dl.PostProcessor import FFmpegExtractAudioPP
 
-
-# sys.path.append(os.path.dirname(os.path.abspath(youtube_dl.__file__)))
-
-# General configuration(from __init__, not very elegant...)
-# jar = compat_cookiejar.CookieJar()
-# cookie_processor = compat_urllib_request.HTTPCookieProcessor(jar)
-# proxy_handler = compat_urllib_request.ProxyHandler()
-# opener = compat_urllib_request.build_opener(
-#     proxy_handler, cookie_processor, YoutubeDLHandler())
-# compat_urllib_request.install_opener(opener)
-
-
 params = {
     "consoletitle": False,
     "continuedl": True,
@@ -65,12 +53,6 @@ params = {
     "listssubtitles": False
 }
 
-
-# def update_progress(morceaux, taille_morceau, taille_totale, uid=None):
-#     time_now = time.time()
-#     pourcent = (taille_morceau * morceaux) * 100. / taille_totale
-#     sys.stderr.write("percent: {}\n".format(str(pourcent)))
-#     cache.set(uid, str(pourcent))
 
 from decorators import async
 from functools import partial

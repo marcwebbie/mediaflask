@@ -45,6 +45,7 @@ class BaseModel(Model):
 
 class Audiofile(BaseModel):
     uid = TextField(primary_key=True, default=lambda: str(uuid4()))
+    title = TextField()
     raw_url = TextField()
     extension = TextField()
     disk_path = TextField(default="")
@@ -61,7 +62,8 @@ class Audiofile(BaseModel):
 
 def update_progress(morceaux, taille_morceau, taille_totale, uid=None):
     pourcent = (taille_morceau * morceaux) * 100. / taille_totale
-    sys.stderr.write("percent: {}\n".format(str(pourcent)))
+    if DEBUG:
+        sys.stderr.write("percent: {}\n".format(str(pourcent)))
     if uid:
         json_report = {
             'uid': uid,
@@ -70,34 +72,6 @@ def update_progress(morceaux, taille_morceau, taille_totale, uid=None):
             'status': 'downloading',   # dowloading, converting, done
         }
         cache.set(uid, json.dumps(json_report))
-
-# from decorators import async
-# from functools import partial
-
-
-# @async
-# def save_video(audiofile_uid, url, disk_path, extension):
-#     name_to_save = disk_path
-#     rh = partial(update_progress, uid=audiofile_uid)
-#     urllib.request.urlretrieve(url, name_to_save, reporthook=rh)
-
-
-# def info(url):
-#     import sys
-#     import shlex
-#     import subprocess
-#     from tempfile import NamedTemporaryFile
-#     import os
-#     import re
-#     import json
-
-#     with NamedTemporaryFile('w+t', suffix='.info.json') as f:
-#         cmd_dl = "youtube-dl {} --write-info-json --skip-download -f mp4 -q -o {}".format(
-#             url, re.sub("\.info\.json", "", f.name))
-#         with subprocess.Popen(shlex.split(cmd_dl)) as ydl:
-#             pass
-#         info = f.read()
-#         return info
 
 
 def create_tables():
@@ -131,9 +105,10 @@ def check():
         url = request.form["url"]
         info_json = info(url)
         info_dict = json.loads(info_json)
+        title = info_dict['stitle']
         ext = info_dict['ext']
         raw_url = info_dict['url']
-        af = Audiofile.create(extension=ext, raw_url=raw_url)
+        af = Audiofile.create(title=title, extension=ext, raw_url=raw_url)
 
         # add uid to dict for json
         info_dict['uid'] = af.uid
@@ -145,10 +120,6 @@ def check():
 @app.route("/progress/<uid>")
 def progress(uid):
     info_dict = json.loads(cache.get(uid))
-    # if int(info_dict['dl_progress']) >= 100:
-    #     info_dict['status'] = 'done'
-    #     json_info = json.dumps(info_dict)
-    #     return Response(json_info, mimetype='application/json')
     return Response(cache.get(uid), mimetype='application/json')
 
 
@@ -179,7 +150,8 @@ def clear_server():
         os.remove(DATABASE)
     print("Supprimer fichiers multimedia...")
     for f in glob.glob(os.path.join(MEDIA_ROOT, '*')):
-        os.remove(f)
+        if os.path.basename(f) != "__init__.py":
+            os.remove(f)
 
 if __name__ == "__main__":
     clear_server()
