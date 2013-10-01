@@ -192,7 +192,8 @@
 
     function get_download_button(uid){
         var output_format = 'mp3';
-        // var target_url = $("#download_button").attr("href") + '/' + output_format + '/' + uid;
+        var target_url = $("#download_button").attr("href") + '/' + output_format + '/' + uid;
+        $("#download_button").attr("href", target_url);
         $("#download_button").attr("title", uid);
         $("#download_button").show();
         $('#format_select_div').show();
