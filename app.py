@@ -20,6 +20,7 @@ from flask import (
 from flask import g
 from peewee import *
 from werkzeug.contrib.cache import SimpleCache
+from werkzeug.urls import iri_to_uri
 from pydub import AudioSegment
 
 from downloader import download as save_video
@@ -157,15 +158,7 @@ def download(output_format=None, uid=None):
     af = Audiofile.select().where(Audiofile.uid == uid).get()
     af_dest_name = af.title + '.' + output_format 
     af_audio_path = af.export(output_format)
-    return send_file(af_audio_path, as_attachment=True, attachment_filename=af_dest_name)
-
-    # Check for valid file and assign it to `inbound_file`
-    # with open(af_audio_path, 'r') as mp3_file:
-    #     data = mp3_file.read()
-    # response = make_response(data)
-    # response.headers["Content-Disposition"] = "attachment; filename={}".format(af_dest_name)
-    # return response
-
+    return send_file(af_audio_path, as_attachment=True, attachment_filename=iri_to_uri(af_dest_name))
 
 def clear_server():
     if os.path.exists(DATABASE):
