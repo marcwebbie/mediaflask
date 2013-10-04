@@ -1,3 +1,9 @@
-flask
-peewee
-pytz==2013b
+Flask==0.10.1
+Jinja2==2.7.1
+MarkupSafe==0.18
+Werkzeug==0.9.4
+distribute==0.6.34
+itsdangerous==0.23
+peewee==2.1.4
+pydub==0.7.1
+youtube-dl==2013.10.04

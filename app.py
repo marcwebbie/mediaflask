@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import datetime
 from functools import partial
 import glob
@@ -8,7 +11,12 @@ import time
 import urllib.request
 from uuid import uuid4
 
-from flask import Flask, Response, render_template, redirect, url_for, request, send_file
+from flask import (
+    Flask, Response, render_template, 
+    redirect, url_for, request, send_file, 
+    send_from_directory, make_response,
+    safe_join
+)
 from flask import g
 from peewee import *
 from werkzeug.contrib.cache import SimpleCache
@@ -34,8 +42,13 @@ SECRET_KEY = 'hin6bab8ge25*r=x&amp;+5$0kn=-#log$pt^#@vrqjld!^2ci@g*b'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+app.config['MEDIA_FOLDER'] = MEDIA_ROOT
 database = SqliteDatabase(DATABASE, check_same_thread=False)
 
+
+def debug_print(msg):
+    if DEBUG:
+        sys.stderr.write(msg + '\n')
 
 class BaseModel(Model):
 
@@ -55,11 +68,9 @@ class Audiofile(BaseModel):
 
     def export(self, output_format='mp3'):
         af_audio_path = os.path.join(
-            MEDIA_ROOT, '{}.{}'.format(self.title, output_format))
+            MEDIA_ROOT, u'{}.{}'.format(self.uid, output_format))
         AudioSegment.from_file(self.disk_path).export(af_audio_path, format=output_format)
-        os.remove(self.disk_path)
-        self.disk_path = af_audio_path
-        self.save()
+        # os.remove(self.disk_path)
         return af_audio_path
 
 
@@ -132,7 +143,7 @@ def convert(uid):
     audiofile_uid = af.uid
     url = af.raw_url
     ext = af.extension
-    af.disk_path = os.path.join(MEDIA_ROOT, "{}.{}".format(uid, ext))
+    af.disk_path = os.path.join(MEDIA_ROOT, u"{}.{}".format(uid, ext))
     af.save()
 
     rh = partial(update_progress, uid=audiofile_uid)
@@ -142,24 +153,32 @@ def convert(uid):
 
 @app.route("/download")
 @app.route("/download/<output_format>/<uid>")
-def download(uid=None, output_format=None):
+def download(output_format=None, uid=None):
     af = Audiofile.select().where(Audiofile.uid == uid).get()
+    af_dest_name = af.title + '.' + output_format 
     af_audio_path = af.export(output_format)
-    return send_file(af_audio_path, as_attachment=True, mimetype='video/mpeg')
+    return send_file(af_audio_path, as_attachment=True, attachment_filename=af_dest_name)
+
+    # Check for valid file and assign it to `inbound_file`
+    # with open(af_audio_path, 'r') as mp3_file:
+    #     data = mp3_file.read()
+    # response = make_response(data)
+    # response.headers["Content-Disposition"] = "attachment; filename={}".format(af_dest_name)
+    # return response
 
 
 def clear_server():
     if os.path.exists(DATABASE):
-        print("Supprimer la base de données...")
+        debug_print("Supprimer la base de données...")
         os.remove(DATABASE)
-    print("Supprimer fichiers multimedia...")
+    debug_print("Supprimer fichiers multimedia...")
     for f in glob.glob(os.path.join(MEDIA_ROOT, '*')):
         if os.path.basename(f) != "__init__.py":
             os.remove(f)
 
 if __name__ == "__main__":
     clear_server()
-    print("Creation de la base de données...")
+    debug_print("Creation de la base de données...")
     create_tables()
-    print("Base de données crée...")
+    debug_print("Base de données crée...")
     app.run()
