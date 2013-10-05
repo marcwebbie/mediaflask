@@ -12,8 +12,8 @@ import urllib.request
 from uuid import uuid4
 
 from flask import (
-    Flask, Response, render_template, 
-    redirect, url_for, request, send_file, 
+    Flask, Response, render_template,
+    redirect, url_for, request, send_file,
     send_from_directory, make_response,
     safe_join
 )
@@ -51,6 +51,7 @@ def debug_print(msg):
     if DEBUG:
         sys.stderr.write(msg + '\n')
 
+
 class BaseModel(Model):
 
     class Meta:
@@ -67,11 +68,11 @@ class Audiofile(BaseModel):
     class Meta:
         order_by = ('-extension',)
 
-    def export(self, output_format='mp3'):
+    def export(self, output_format='mp3', tags=None):
         af_audio_path = os.path.join(
             MEDIA_ROOT, u'{}.{}'.format(self.uid, output_format))
-        AudioSegment.from_file(self.disk_path).export(af_audio_path, format=output_format)
-        # os.remove(self.disk_path)
+        AudioSegment.from_file(self.disk_path).export(af_audio_path,
+                                                      format=output_format, tags=tags)
         return af_audio_path
 
 
@@ -152,13 +153,34 @@ def convert(uid):
     return Response(url_for("progress", uid=uid), mimetype='text/plain')
 
 
-@app.route("/download")
+@app.route("/download", methods=['POST'])
 @app.route("/download/<output_format>/<uid>")
 def download(output_format=None, uid=None):
-    af = Audiofile.select().where(Audiofile.uid == uid).get()
-    af_dest_name = af.title + '.' + output_format 
-    af_audio_path = af.export(output_format)
-    return send_file(af_audio_path, as_attachment=True, attachment_filename=iri_to_uri(af_dest_name))
+    if request.method == 'POST':
+        uid = request.form['uid_input']
+        output_format = request.form['song_format_input']
+        song_tags = {
+            'artist': request.form['artist_input'],
+            'title': request.form['song_title_input'],
+            'album': request.form['album_input'],
+            'year': request.form['year_input'],
+            'comment': request.form['comment_input'],
+        }
+
+        af = Audiofile.select().where(Audiofile.uid == uid).get()
+        af_dest_name = af.title + '.' + output_format
+        af_audio_path = af.export(output_format, tags=song_tags)
+
+        # import pdb
+        # pdb.set_trace()
+        return send_file(af_audio_path, as_attachment=True, attachment_filename=iri_to_uri(af_dest_name))
+
+    # af = Audiofile.select().where(Audiofile.uid == uid).get()
+    # af_dest_name = af.title + '.' + output_format
+    # af_audio_path = af.export(output_format)
+    # return send_file(af_audio_path, as_attachment=True,
+    # attachment_filename=iri_to_uri(af_dest_name))
+
 
 def clear_server():
     if os.path.exists(DATABASE):

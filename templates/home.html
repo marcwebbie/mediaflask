@@ -3,50 +3,7 @@
 {% block title %}YouPymp3 - Download Youtube mp3{% endblock title %}
  
 {% block extra_head %}
-  <style>
-    .input-xxlarge {
-      width: 600px  !important;
-      height: 44px;
-      margin-bottom: 10px !important;
-      line-height: 30px !important;
-      padding: 11px 19px !important;
-      font-size: 17.5px !important;
-    }
-
-    .container-full {
-      margin: 0 auto;
-      width: 100%;
-      min-height:100%;
-      background-color:#ffFFFF;
-      color:#6D1717;
-      overflow:hidden;
-    }
-
-    .container-full a {
-      color:#6D1717;
-      text-decoration:none;
-    }
-
-    .input-group {
-      width: 100% !important;
-    }
-
-    .media-object{
-      height: 150px !important ;
-      width: 150px !important;
-    }
-
-    .thumbnail {
-      display: block;
-      padding: 4px;
-      line-height: 20px;
-      border: 1px solid #ddd;
-      width: 200px;
-      height: 200px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-  </style>
+    <link href="{{ url_for('static', filename='css/home.css') }}" rel="stylesheet" type="text/css">
 {% endblock extra_head %}
 
 {% block content %}
@@ -82,34 +39,36 @@
                     Panel content
                 </div>
             </div>
-<!--             <div id="audio_div" class="col-lg-12 text-center v-center">
-                <video id="video_player" width="100%" height="1" controls preload="auto">
-                    <source src="//example.com" type="video/mp4">
-                </video> 
-                <audio controls preload="auto" width="100%" height="50px">  
-                    <source id="source_audio" src="//example.com" type='audio/mpeg' />  
-                </audio>
-            </div> -->
         </div>
     </div> <!-- /row -->
 
     <div class="row">
+
         <br />
 
         <div id="message_div" class="col-lg-12 text-center v-center" style="font-size:20pt;">
-            <div id="success_div" class='alert alert-success button-group'>
+            <div id="success_div" class='alert alert-success text-center v-center'>
                 <a id="convert_button" href="{{ url_for('convert', uid='') }}"><button class='btn btn-primary btn-lg'><i class='icon-music'></i> convert</button></a>
-                <a id="format_select_div" style='height'>
-                    <select id="format_select_div" class="selectpicker bla bla bli" data-live-search="false">
-                        <option>mp3</option>
-                        <option>wav</option>
-                        <option>ogg</option>
-                    </select>
-                </a>
-                <a id="download_button" href="{{ url_for('download') }}">
-                    <button class='btn btn-primary btn-lg'><i class='icon-download'></i> download</button>
-                    <div></div>
-                </a>
+<!--                 <div id="dl_options_form" class="col-lg-4 col-md-offset-4">
+                    <div id="tags_form" class="control-group">
+                        <div class="controls">
+                            <input id="input_box" name="artist_input" type="text" class="form-control" placeholder="Artist">
+                            <input id="input_box" name="song_title_input" type="text" class="form-control" placeholder="Song Title">
+                            <input id="input_box" name="album_input" type="text" class="form-control" placeholder="Album">
+                            <input id="input_box" name="comments_input" type="text" class="form-control" placeholder="Comments">
+                            <a id="format_select_div" style='height'>
+                                <select id="format_select_div" class="selectpicker bla bla bli" data-live-search="false">
+                                    <option>mp3</option>
+                                    <option>wav</option>
+                                    <option>ogg</option>
+                                </select>
+                            </a>
+                        </div>
+                    </div>
+                </div> -->
+            
+                <!-- Button trigger modal -->
+                <a id="modal_button" data-toggle="modal" href="#myModal" class="btn btn-primary btn-lg">Launch download</a>
             </div>
             {% for error in error_list %}
                 <div class="alert alert-danger">{{ error }}</div> 
@@ -124,6 +83,50 @@
             </div>
         </div>
 
+        <form id="dl_options_form" action="{{ url_for('download') }}" method="POST">
+              <!-- Modal -->
+              <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title">Audio tags</h4>
+                    </div>
+                    <div class="modal-body">
+                        
+                        
+                            <div id="tags_form" class="control-group">
+                                <!-- <div class="controls"> -->
+                                    <input name="uid_input"  type="hidden" class="form-control" >
+                                    <input name="artist_input" type="text" class="form-control" placeholder="Artist">
+                                    <input name="song_title_input" type="text" class="form-control" placeholder="Song Title">
+                                    <input name="album_input" type="text" class="form-control" placeholder="Album">
+                                    <input name="year_input" type="text" class="form-control" placeholder="Year">
+                                    <input name="comment_input" type="text" class="form-control" placeholder="Comments">
+                                    <input name="song_format_input" type="hidden" class="form-control" >
+                                    <a id="format_select_div">
+                                        <select id="format_select_div" class="selectpicker bla bla bli" data-live-search="false">
+                                            <option>mp3</option>
+                                            <option>wav</option>
+                                            <option>ogg</option>
+                                        </select>
+                                    </a>
+                                <!-- </div> -->
+                            </div>
+
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Close</button>
+                        <a id="download_button">
+                            <button class='btn btn-primary btn-lg' type='submit'><i class='icon-download'></i> download</button>
+                            <div></div>
+                        </a>  
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal -->
+          </form>
     </div> <!-- /row -->
     <br>
 
@@ -155,11 +158,7 @@
     $(window).on('load', function () {
 
         $('.selectpicker').selectpicker({
-            // 'selectedText': 'cat'
-            // style: 'btn btn-primary btn-lg'
         });
-
-        // $('.selectpicker').selectpicker('hide');
     });
 
     // Main code run when the document is ready
@@ -167,9 +166,11 @@
         get_initial_state();
     });
 
+
     $('.selectpicker').on('change', function() {
+        $('input[name=song_format_input]').val($(this).val())
         // alert( $('.selectpicker').selectpicker('val') ); // or $(this).val()
-        $("#download_button").attr("href", "{{ url_for('download') }}" + '/' + $('.selectpicker').selectpicker('val') + '/' + $("#download_button").attr("title"));
+        // $("#download_button").attr("href", "{{ url_for('download') }}" + '/' + $('.selectpicker').selectpicker('val') + '/' + $("#download_button").attr("title"));
     });
 
     function get_initial_state() {
@@ -185,19 +186,17 @@
 
 
         $('#convert_button').hide();     
-        $('#download_button').hide();
-        $('#format_select_div').hide();
+        $('#modal_button').hide();
         $(".panel").hide();
+        $('input[name=song_format_input]').val('mp3')
     }
 
     function get_download_button(uid){
-        var output_format = 'mp3';
-        var target_url = $("#download_button").attr("href") + '/' + output_format + '/' + uid;
-        $("#download_button").attr("href", target_url);
-        $("#download_button").attr("title", uid);
-        $("#download_button").show();
-        $('#format_select_div').show();
+        // alert('Adding to download button uid: ' + uid)
+        $('input[name=uid_input]').val(uid);
+        $("#modal_button").show();
 
+        $(".panel").hide();
         $("#convert_button").hide();
         
         $("#success_div").show("fade-in");
@@ -208,10 +207,7 @@
     function get_convert_button(uid){
         $("#convert_button").attr("href", $("#convert_button").attr("href") + uid);
         $("#convert_button").show();
-        $('#format_select_div').hide();
         $(".panel").show();
-
-        $("#download_button").hide();
 
         $("#success_div").show("fade-in");
         $('#progress_div').hide(); 
@@ -241,7 +237,7 @@
             })
             .fail( function (data) {
                 $('#button_check').show().html('Check');
-                javascript: console.log("Failed to update download progress: " + data)
+                // javascript: console.log("Failed to update download progress: " + data)
                 message_html = "<div class='alert alert-danger'><h2>Failed to update download progress bar.</h2></div>";
                 $('#message_div').html(message_html);
             });
@@ -256,14 +252,14 @@
             get_progress(dl_data);
         }).fail( function (data) {
             $('#button_check').show().html('Check');
-            javascript: console.log("Failed to convert video: " + data)
+            // javascript: console.log("Failed to convert video: " + data)
             message_html = "<div class='alert alert-danger'><h2>Failed to convert video.</h2></div>";
             $('#message_div').html(message_html);
         });
         return false;
     });
 
-    $("#button_check").click(function(ev) { // catch the form's submit event
+    $("#button_check").click(function(ev) {
         ev.preventDefault();
         // $('#message_div').html("");  
         $('#button_check').html('<i class="icon-spinner icon-spin icon-large icon-1x"></i>');
@@ -276,25 +272,19 @@
         }, "json")
         .done(function(data) {
             $('#button_check').show().html('Check');
-            javascript: console.log("[DONE] Sucess getting video info: " + data.url);
-            javascript: console.log("[DONE] Video ext: " + data.ext);
-            javascript: console.log("[DONE] Video uid: " + data.uid);
-            javascript: console.log("[DONE] Video uid: " + "<a href='{{ url_for('convert', uid='') }}'" + data.uid);
+            // javascript: console.log("[DONE] Sucess getting video info: " + data.url);
+            // javascript: console.log("[DONE] Video ext: " + data.ext);
+            // javascript: console.log("[DONE] Video uid: " + data.uid);
+            // javascript: console.log("[DONE] Video uid: " + "<a href='{{ url_for('convert', uid='') }}'" + data.uid);
 
             get_convert_button(data.uid);
             get_video_player(data.url);
             $(".panel-title").text(data.stitle);
             $(".panel-body").html("<img height='100%' width='100%' src='"+data.thumbnail+"'></img>");
-            // $("#success_div").html("")
-            // $("#success_div").append(dl_link);
-            // $("#download_button").attr("href", $("#download_button").attr("href") + data.uid);
-            // $("#success_div").show("fade-in");
-            // $('#button_check').show().html('Check');
-            // $('#button_convert').html("Download"); 
         })
         .fail( function (data) {
             $('#button_check').show().html('Check');
-            javascript: console.log("Failed to get video info: " + data)
+            // javascript: console.log("Failed to get video info: " + data)
             $('#button_convert').html("Download"); 
             message_html = "<div class='alert alert-danger'><h2>Failed to fetch video info.</h2></div>";
             $('#message_div').html(message_html);
