@@ -163,8 +163,7 @@ def download(output_format=None, uid=None):
             'artist': request.form['artist_input'],
             'title': request.form['song_title_input'],
             'album': request.form['album_input'],
-            'year': request.form['year_input'],
-            'comment': request.form['comment_input'],
+            'date': request.form['year_input'],
         }
 
         af = Audiofile.select().where(Audiofile.uid == uid).get()
