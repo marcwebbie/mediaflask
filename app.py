@@ -72,7 +72,7 @@ class Audiofile(BaseModel):
         af_audio_path = os.path.join(
             MEDIA_ROOT, u'{}.{}'.format(self.uid, output_format))
         AudioSegment.from_file(self.disk_path).export(af_audio_path,
-                                                      format=output_format, tags=tags)
+                                                      format=output_format, tags=tags, id3v2_version='3')
         return af_audio_path
 
 

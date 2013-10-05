@@ -1,0 +1,43 @@
+
+.input-xxlarge {
+  width: 600px  !important;
+  height: 44px;
+  margin-bottom: 10px !important;
+  line-height: 30px !important;
+  padding: 11px 19px !important;
+  font-size: 17.5px !important;
+}
+
+.container-full {
+  margin: 0 auto;
+  width: 100%;
+  min-height:100%;
+  background-color:#ffFFFF;
+  color:#6D1717;
+  overflow:hidden;
+}
+
+.container-full a {
+  color:#6D1717;
+  text-decoration:none;
+}
+
+.input-group {
+  width: 100% !important;
+}
+
+.media-object{
+  height: 150px !important ;
+  width: 150px !important;
+}
+
+.thumbnail {
+  display: block;
+  padding: 4px;
+  line-height: 20px;
+  border: 1px solid #ddd;
+  width: 200px;
+  height: 200px;
+  margin-left: auto;
+  margin-right: auto;
+}
