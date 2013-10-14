@@ -2,7 +2,7 @@ import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 import sys
 sys.path.append("/usr/lib/python3.3/site-packages/")
-sys.path.append("/usr/lib/python3/dist-package/")
+sys.path.append("/usr/lib/python3.3/dist-package/")
 
 from functools import partial
 import json

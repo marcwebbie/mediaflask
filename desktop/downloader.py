@@ -84,11 +84,11 @@ def download(url, disk_path, export='mp3', bitrate='192', tags=None, reporthook=
             )
 
         # notify user of end of download
-        from gi.repository import Notify
-        Notify.init("Download complete")
-        dl_complete = Notify.Notification.new(
-            "Download completed", name_to_save, "dialog-information")
-        dl_complete.show()
+        import shlex
+        import subprocess
+        notify_cmd = 'notify-send "Download completed!" "{0}" --icon=dialog-information'.format(
+            name_to_save)
+        subprocess.call(shlex.split(notify_cmd))
     else:
         urllib.request.urlretrieve(url, name_to_save, reporthook=reporthook)
 
