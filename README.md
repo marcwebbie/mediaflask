@@ -23,7 +23,7 @@ pip install -U requeriments.txt
 pip install -U https://github.com/marcwebbie/pydub/tarball/master
 ```
 
-### Mètre-a-jour MediaFlask
+### Mètre-à-jour MediaFlask
 
 ```
 # rentrer dans l'environment virtuel
