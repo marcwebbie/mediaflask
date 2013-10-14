@@ -124,7 +124,7 @@ class MediaFlask:
 
     def report_hook(self, morceaux, taille_morceau, taille_totale, item_selected=None):
         pourcent = float(taille_morceau * morceaux / taille_totale) * 100
-        # sys.stderr.write('\rpourcent: {}\n'.format(pourcent))
+        sys.stderr.write('\rpourcent: {}\n'.format(pourcent))
         self.store[item_selected][5] = int(pourcent) if pourcent <= 100.0 else 100
 
     def on_edit_title(self, widget, path, text):
