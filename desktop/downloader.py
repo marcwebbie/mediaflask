@@ -59,12 +59,20 @@ params = {
 
 from functools import partial
 from threading import Thread
+import multiprocessing
 
 
 def async(f):
     def wrapper(*args, **kwargs):
         thr = Thread(target=f, args=args, kwargs=kwargs)
         thr.start()
+    return wrapper
+
+
+def multiprocessed(func):
+    def wrapper(*args, **kwargs):
+        p = multiprocessing.Process(target=func, args=args, kwargs=kwargs)
+        p.start()
     return wrapper
 
 

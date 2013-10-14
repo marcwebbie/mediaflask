@@ -7,12 +7,14 @@ sys.path.append("/usr/lib/python3.3/dist-package/")
 from functools import partial
 import json
 from tempfile import NamedTemporaryFile
-from gi.repository import Gtk, Gdk, GdkPixbuf
+from gi.repository import Gtk, Gdk, GdkPixbuf, GObject
 
 import downloader
 
 
 UI_FILE = "desktop.ui.glade"
+
+GObject.threads_init()
 
 
 class PlaylistDialog(Gtk.Dialog):
@@ -127,6 +129,9 @@ class MediaFlask:
         sys.stderr.write('\rpourcent: {}\n'.format(pourcent))
         self.store[item_selected][5] = int(pourcent) if pourcent <= 100.0 else 100
 
+    def download_file(self):
+        pass
+
     def on_edit_title(self, widget, path, text):
         self.store[path][2] = text
 
@@ -227,22 +232,6 @@ class MediaFlask:
     def on_tree_selection_changed(self, selection):
         model, curr_iter = selection.get_selected()
         self.current_iter = curr_iter
-
-    def add_filters(self, dialog):
-        filter_text = Gtk.FileFilter()
-        filter_text.set_name("MP3 file")
-        filter_text.add_mime_type("audio/mpeg")
-        dialog.add_filter(filter_text)
-
-        filter_py = Gtk.FileFilter()
-        filter_py.set_name("Python file")
-        filter_py.add_mime_type("text/x-python")
-        dialog.add_filter(filter_py)
-
-        filter_any = Gtk.FileFilter()
-        filter_any.set_name("Any file")
-        filter_any.add_pattern("*")
-        dialog.add_filter(filter_any)
 
 
 if __name__ == "__main__":
