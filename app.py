@@ -72,7 +72,9 @@ class Audiofile(BaseModel):
         af_audio_path = os.path.join(
             MEDIA_ROOT, u'{}.{}'.format(self.uid, output_format))
         AudioSegment.from_file(self.disk_path).export(af_audio_path,
-                                                      format=output_format, tags=tags, id3v2_version='3')
+                                                      format=output_format,
+                                                      tags=tags,
+                                                      id3v2_version='3')
         return af_audio_path
 
 
@@ -135,7 +137,6 @@ def check():
 
 @app.route("/progress/<uid>")
 def progress(uid):
-    info_dict = json.loads(cache.get(uid))
     return Response(cache.get(uid), mimetype='application/json')
 
 
@@ -172,7 +173,8 @@ def download(output_format=None, uid=None):
 
         # import pdb
         # pdb.set_trace()
-        return send_file(af_audio_path, as_attachment=True, attachment_filename=iri_to_uri(af_dest_name))
+        return send_file(af_audio_path, as_attachment=True,
+                         attachment_filename=iri_to_uri(af_dest_name))
 
     # af = Audiofile.select().where(Audiofile.uid == uid).get()
     # af_dest_name = af.title + '.' + output_format
