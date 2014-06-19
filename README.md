@@ -8,7 +8,7 @@ virtualenv -p /usr/bin/python3 env_mediaflask
 cd env_mediaflask
 
 # cloner le code source du projet
-git clone https://bitbucket.org/marcwebbie/mediaflask
+git clone https://github.com/marcwebbie/mediaflask.git
 
 # activer l'environment virtuel
 source bin/activate
