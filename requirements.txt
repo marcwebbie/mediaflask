@@ -1,3 +1,4 @@
-Flask==0.10.1
-peewee==2.1.4
+Flask
+peewee
 youtube-dl
+pydub
