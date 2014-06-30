@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}YouPymp3 - Download Youtube mp3{% endblock title %}
- 
+{% block title %}Mediaflask - Download Videos as mp3{% endblock title %}
+
 {% block extra_head %}
     <link href="{{ url_for('static', filename='css/home.css') }}" rel="stylesheet" type="text/css">
 {% endblock extra_head %}
@@ -25,7 +25,7 @@
                     <a href="#" id="to_replace"></a>
                 </div>
             </form>
-        </div> 
+        </div>
     </div> <!-- /row -->
 
     <div class="row">
@@ -66,12 +66,12 @@
                         </div>
                     </div>
                 </div> -->
-            
+
                 <!-- Button trigger modal -->
                 <a id="modal_button" data-toggle="modal" href="#myModal" class="btn btn-primary btn-lg">Launch download</a>
             </div>
             {% for error in error_list %}
-                <div class="alert alert-danger">{{ error }}</div> 
+                <div class="alert alert-danger">{{ error }}</div>
             {% endfor %}
 
             <div id="progress_div" class="col-lg-2 col-md-offset-5 text-center v-center" style="font-size:20pt;">
@@ -93,8 +93,8 @@
                       <h4 class="modal-title">Audio tags</h4>
                     </div>
                     <div class="modal-body">
-                        
-                        
+
+
                             <div id="tags_form" class="control-group">
                                 <!-- <div class="controls"> -->
                                     <input name="uid_input"  type="hidden" class="form-control" >
@@ -113,14 +113,14 @@
                                 <!-- </div> -->
                             </div>
 
-                        
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Close</button>
                         <a id="download_button">
                             <button class='btn btn-primary btn-lg' type='submit'><i class='icon-download'></i> download</button>
                             <div></div>
-                        </a>  
+                        </a>
                     </div>
                   </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
@@ -140,7 +140,7 @@
 </div> <!-- /container full -->
 
 <div class="container">
-  <hr>  
+  <hr>
   <div class="row">
     <div class="col-lg-12">
       <br><br>
@@ -178,13 +178,13 @@
         $('#button_check').show().html('Check');
         $('#button_convert').hide().html('Download');
 
-        $('#success_div').hide();  
-        $("#audio_div").hide(); 
+        $('#success_div').hide();
+        $("#audio_div").hide();
         $("video").hide();
-        $('#progress_div').hide(); 
+        $('#progress_div').hide();
 
 
-        $('#convert_button').hide();     
+        $('#convert_button').hide();
         $('#modal_button').hide();
         $(".panel").hide();
         $('input[name=song_format_input]').val('mp3')
@@ -197,9 +197,9 @@
 
         $(".panel").hide();
         $("#convert_button").hide();
-        
+
         $("#success_div").show("fade-in");
-        $('#progress_div').hide(); 
+        $('#progress_div').hide();
     }
 
 
@@ -209,7 +209,7 @@
         $(".panel").show();
 
         $("#success_div").show("fade-in");
-        $('#progress_div').hide(); 
+        $('#progress_div').hide();
     }
 
 
@@ -219,8 +219,8 @@
     }
 
     function get_progress(progress_url) {
-        $('#success_div').hide(); 
-        $('#progress_div').show(); 
+        $('#success_div').hide();
+        $('#progress_div').show();
 
         var my_timer = setInterval(function() {
             $.get( progress_url, function( progress_data ) {
@@ -240,7 +240,7 @@
                 message_html = "<div class='alert alert-danger'><h2>Failed to update download progress bar.</h2></div>";
                 $('#message_div').html(message_html);
             });
-        }, 5000);  
+        }, 5000);
     }
 
     $("#convert_button").click(function(ev) {
@@ -284,10 +284,10 @@
         .fail( function (data) {
             $('#button_check').show().html('Check');
             // javascript: console.log("Failed to get video info: " + data)
-            $('#button_convert').html("Download"); 
+            $('#button_convert').html("Download");
             message_html = "<div class='alert alert-danger'><h2>Failed to fetch video info.</h2></div>";
             $('#message_div').html(message_html);
-        });  
+        });
         return false;
     });
 
@@ -296,4 +296,3 @@
     });
 </script>
 {% endblock scripts %}
-
