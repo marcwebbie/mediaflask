@@ -7,7 +7,7 @@ import urllib
 import youtube_dl.YoutubeDL
 import youtube_dl.extractor
 from youtube_dl.utils import *
-from youtube_dl.PostProcessor import FFmpegExtractAudioPP
+from youtube_dl.postprocessor import FFmpegExtractAudioPP
 
 params = {
     "consoletitle": False,
