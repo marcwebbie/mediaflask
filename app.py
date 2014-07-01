@@ -27,13 +27,6 @@ from downloader import download as save_video
 from downloader import info
 
 cache = SimpleCache()
-# messages on cache must be formated like that:
-# {
-#     'uid': '5151-5156-15115615-1515',
-#     'dl_progress': 10,
-#     'convert_progress': 0,
-# 'status': 'converting',   # dowloading, converting, done
-# }
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media/')
