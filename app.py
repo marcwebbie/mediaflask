@@ -75,13 +75,13 @@ def update_progress(morceaux, taille_morceau, taille_totale, uid=None):
     pourcent = (taille_morceau * morceaux) * 100. / taille_totale
     if DEBUG:
         sys.stderr.write("percent: {}\n".format(str(pourcent)))
-    if uid:
-        json_report = {
-            'uid': uid,
-            'dl_progress': pourcent,
-            'convert_progress': 0,
-            'status': 'downloading',   # dowloading, converting, done
-        }
+        if uid:
+            json_report = {
+                'uid': uid,
+                'dl_progress': pourcent,
+                'convert_progress': 0,
+                'status': 'downloading',   # dowloading, converting, done
+            }
         cache.set(uid, json.dumps(json_report))
 
 
@@ -164,26 +164,18 @@ def download(output_format=None, uid=None):
         af_dest_name = af.title + '.' + output_format
         af_audio_path = af.export(output_format, tags=song_tags)
 
-        # import pdb
-        # pdb.set_trace()
         return send_file(af_audio_path, as_attachment=True,
                          attachment_filename=iri_to_uri(af_dest_name))
-
-    # af = Audiofile.select().where(Audiofile.uid == uid).get()
-    # af_dest_name = af.title + '.' + output_format
-    # af_audio_path = af.export(output_format)
-    # return send_file(af_audio_path, as_attachment=True,
-    # attachment_filename=iri_to_uri(af_dest_name))
 
 
 def clear_server():
     if os.path.exists(DATABASE):
         debug_print("Supprimer la base de données...")
         os.remove(DATABASE)
-    debug_print("Supprimer fichiers multimedia...")
-    for f in glob.glob(os.path.join(MEDIA_ROOT, '*')):
-        if os.path.basename(f) != "__init__.py":
-            os.remove(f)
+        debug_print("Supprimer fichiers multimedia...")
+        for f in glob.glob(os.path.join(MEDIA_ROOT, '*')):
+            if os.path.basename(f) != "__init__.py":
+                os.remove(f)
 
 if __name__ == "__main__":
     clear_server()
