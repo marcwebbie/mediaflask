@@ -3,131 +3,131 @@
 {% block title %}Mediaflask - Download Videos as mp3{% endblock title %}
 
 {% block extra_head %}
-    <link href="{{ url_for('static', filename='css/home.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ url_for('static', filename='css/home.css') }}" rel="stylesheet" type="text/css">
 {% endblock extra_head %}
 
 {% block content %}
 <div class="container-full">
-    <div class="row">
-        <div class="col-md-offset-3 col-lg-6 text-center v-center">
-            <h1>Video to mp3</h1>
-            <p class="lead">Convert your favorite online videos to mp3 automatically.</p>
+  <div class="row">
+    <div class="col-md-offset-3 col-lg-6 text-center v-center">
+      <h1>Video to mp3</h1>
+      <p class="lead">Convert your favorite online videos to mp3 automatically.</p>
 
-            <br><br>
+      <br><br>
 
-            <form id="download_form" class="col-lg-12" action="#" method="POST">
-                <div class="input-group" style="width:340px;text-align:center;margin:0 auto;">
-                    <input id="input_box" name="url" type="text" class="form-control input-lg" title="Copy and paste the videos url and press the OK button" placeholder="http://<type video url here>">
-                    <span class="input-group-btn">
-                        <!-- <button id="button_convert" type="submit" href="#" class="btn btn-success btn-lg"  rel="popover">Convert</button> -->
-                        <button id="button_check" type="submit" href="#" class="btn btn-primary btn-lg">Check</button>
-                    </span>
-                    <a href="#" id="to_replace"></a>
-                </div>
-            </form>
+      <form id="download_form" class="col-lg-12" action="#" method="POST">
+        <div class="input-group" style="width:340px;text-align:center;margin:0 auto;">
+          <input id="input_box" name="url" type="text" class="form-control input-lg" title="Copy and paste the videos url and press the OK button" placeholder="http://<type video url here>">
+          <span class="input-group-btn">
+            <!-- <button id="button_convert" type="submit" href="#" class="btn btn-success btn-lg"  rel="popover">Convert</button> -->
+            <button id="button_check" type="submit" href="#" class="btn btn-primary btn-lg">Check</button>
+          </span>
+          <a href="#" id="to_replace"></a>
         </div>
-    </div> <!-- /row -->
+      </form>
+    </div>
+  </div> <!-- /row -->
 
-    <div class="row">
-        <br />
-        <div id="other_info_div" class="col-lg-2 col-md-offset-5 text-center v-center">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h2 class="panel-title">Panel title</h3>
-                </div>
-                <div class="panel-body">
-                    Panel content
-                </div>
-            </div>
+  <div class="row">
+    <br />
+    <div id="other_info_div" class="col-lg-2 col-md-offset-5 text-center v-center">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2 class="panel-title">Panel title</h3>
         </div>
-    </div> <!-- /row -->
-
-    <div class="row">
-
-        <br />
-
-        <div id="message_div" class="col-lg-12 text-center v-center" style="font-size:20pt;">
-            <div id="success_div" class='alert alert-success text-center v-center'>
-                <a id="convert_button" href="{{ url_for('convert', uid='') }}"><button class='btn btn-primary btn-lg'><i class='icon-music'></i> convert</button></a>
-<!--                 <div id="dl_options_form" class="col-lg-4 col-md-offset-4">
-                    <div id="tags_form" class="control-group">
-                        <div class="controls">
-                            <input id="input_box" name="artist_input" type="text" class="form-control" placeholder="Artist">
-                            <input id="input_box" name="song_title_input" type="text" class="form-control" placeholder="Song Title">
-                            <input id="input_box" name="album_input" type="text" class="form-control" placeholder="Album">
-                            <input id="input_box" name="comments_input" type="text" class="form-control" placeholder="Comments">
-                            <a id="format_select_div" style='height'>
-                                <select id="format_select_div" class="selectpicker bla bla bli" data-live-search="false">
-                                    <option>mp3</option>
-                                    <option>wav</option>
-                                    <option>ogg</option>
-                                </select>
-                            </a>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!-- Button trigger modal -->
-                <a id="modal_button" data-toggle="modal" href="#myModal" class="btn btn-primary btn-lg">Launch download</a>
-            </div>
-            {% for error in error_list %}
-                <div class="alert alert-danger">{{ error }}</div>
-            {% endfor %}
-
-            <div id="progress_div" class="col-lg-2 col-md-offset-5 text-center v-center" style="font-size:20pt;">
-                <div class="progress progress-striped active">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                        <span class="sr-only">60% Complete</span>
-                    </div>
-                </div>
-            </div>
+        <div class="panel-body">
+          Panel content
         </div>
+      </div>
+    </div>
+  </div> <!-- /row -->
 
-        <form id="dl_options_form" action="{{ url_for('download') }}" method="POST">
-              <!-- Modal -->
-              <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                      <h4 class="modal-title">Audio tags</h4>
-                    </div>
-                    <div class="modal-body">
+  <div class="row">
+
+    <br />
+
+    <div id="message_div" class="col-lg-12 text-center v-center" style="font-size:20pt;">
+      <div id="success_div" class='alert alert-success text-center v-center'>
+        <a id="convert_button" href="{{ url_for('convert', uid='') }}"><button class='btn btn-primary btn-lg'><i class='icon-music'></i> convert</button></a>
+        <!--                 <div id="dl_options_form" class="col-lg-4 col-md-offset-4">
+        <div id="tags_form" class="control-group">
+        <div class="controls">
+        <input id="input_box" name="artist_input" type="text" class="form-control" placeholder="Artist">
+        <input id="input_box" name="song_title_input" type="text" class="form-control" placeholder="Song Title">
+        <input id="input_box" name="album_input" type="text" class="form-control" placeholder="Album">
+        <input id="input_box" name="comments_input" type="text" class="form-control" placeholder="Comments">
+        <a id="format_select_div" style='height'>
+        <select id="format_select_div" class="selectpicker bla bla bli" data-live-search="false">
+        <option>mp3</option>
+        <option>wav</option>
+        <option>ogg</option>
+        </select>
+        </a>
+        </div>
+        </div>
+        </div> -->
+
+        <!-- Button trigger modal -->
+        <a id="modal_button" data-toggle="modal" href="#myModal" class="btn btn-primary btn-lg">Launch download</a>
+      </div>
+      {% for error in error_list %}
+      <div class="alert alert-danger">{{ error }}</div>
+      {% endfor %}
+
+      <div id="progress_div" class="col-lg-2 col-md-offset-5 text-center v-center" style="font-size:20pt;">
+        <div class="progress progress-striped active">
+          <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+            <span class="sr-only">60% Complete</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form id="dl_options_form" action="{{ url_for('download') }}" method="POST">
+      <!-- Modal -->
+      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">Audio tags</h4>
+            </div>
+            <div class="modal-body">
 
 
-                            <div id="tags_form" class="control-group">
-                                <!-- <div class="controls"> -->
-                                    <input name="uid_input"  type="hidden" class="form-control" >
-                                    <input name="artist_input" type="text" class="form-control" placeholder="Artist">
-                                    <input name="song_title_input" type="text" class="form-control" placeholder="Song Title">
-                                    <input name="album_input" type="text" class="form-control" placeholder="Album">
-                                    <input name="year_input" type="text" class="form-control" placeholder="Year">
-                                    <input name="song_format_input" type="hidden" class="form-control" >
-                                    <a id="format_select_div">
-                                        <select id="format_select_div" class="selectpicker bla bla bli" data-live-search="false">
-                                            <option>mp3</option>
-                                            <option>wav</option>
-                                            <option>ogg</option>
-                                        </select>
-                                    </a>
-                                <!-- </div> -->
-                            </div>
+              <div id="tags_form" class="control-group">
+                <!-- <div class="controls"> -->
+                <input name="uid_input"  type="hidden" class="form-control" >
+                <input name="artist_input" type="text" class="form-control" placeholder="Artist">
+                <input name="song_title_input" type="text" class="form-control" placeholder="Song Title">
+                <input name="album_input" type="text" class="form-control" placeholder="Album">
+                <input name="year_input" type="text" class="form-control" placeholder="Year">
+                <input name="song_format_input" type="hidden" class="form-control" >
+                <a id="format_select_div">
+                  <select id="format_select_div" class="selectpicker bla bla bli" data-live-search="false">
+                    <option>mp3</option>
+                    <option>wav</option>
+                    <option>ogg</option>
+                  </select>
+                </a>
+                <!-- </div> -->
+              </div>
 
 
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Close</button>
-                        <a id="download_button">
-                            <button class='btn btn-primary btn-lg' type='submit'><i class='icon-download'></i> download</button>
-                            <div></div>
-                        </a>
-                    </div>
-                  </div><!-- /.modal-content -->
-                </div><!-- /.modal-dialog -->
-              </div><!-- /.modal -->
-          </form>
-    </div> <!-- /row -->
-    <br>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Close</button>
+              <a id="download_button">
+                <button class='btn btn-primary btn-lg' type='submit'><i class='icon-download'></i> download</button>
+                <div></div>
+              </a>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+    </form>
+  </div> <!-- /row -->
+  <br>
 
   <div class="row">
     <div class="col-lg-12 text-center v-center" style="font-size:39pt;">
@@ -154,145 +154,145 @@
 
 {% block scripts %}
 <script>
-    $(window).on('load', function () {
+  $(window).on('load', function () {
 
-        $('.selectpicker').selectpicker({
-        });
+    $('.selectpicker').selectpicker({
     });
+  });
 
-    // Main code run when the document is ready
-    $(document).ready(function() {
-        get_initial_state();
-    });
-
-
-    $('.selectpicker').on('change', function() {
-        $('input[name=song_format_input]').val($(this).val())
-        // alert( $('.selectpicker').selectpicker('val') ); // or $(this).val()
-        // $("#download_button").attr("href", "{{ url_for('download') }}" + '/' + $('.selectpicker').selectpicker('val') + '/' + $("#download_button").attr("title"));
-    });
-
-    function get_initial_state() {
-        $('#input_box').val();
-        $('#button_check').popover({}).hide();
-        $('#button_check').show().html('Check');
-        $('#button_convert').hide().html('Download');
-
-        $('#success_div').hide();
-        $("#audio_div").hide();
-        $("video").hide();
-        $('#progress_div').hide();
+  // Main code run when the document is ready
+  $(document).ready(function() {
+    get_initial_state();
+  });
 
 
-        $('#convert_button').hide();
-        $('#modal_button').hide();
-        $(".panel").hide();
-        $('input[name=song_format_input]').val('mp3')
-    }
+  $('.selectpicker').on('change', function() {
+    $('input[name=song_format_input]').val($(this).val())
+    // alert( $('.selectpicker').selectpicker('val') ); // or $(this).val()
+    // $("#download_button").attr("href", "{{ url_for('download') }}" + '/' + $('.selectpicker').selectpicker('val') + '/' + $("#download_button").attr("title"));
+  });
 
-    function get_download_button(uid){
-        // alert('Adding to download button uid: ' + uid)
-        $('input[name=uid_input]').val(uid);
-        $("#modal_button").show();
+  function get_initial_state() {
+    $('#input_box').val();
+    $('#button_check').popover({}).hide();
+    $('#button_check').show().html('Check');
+    $('#button_convert').hide().html('Download');
 
-        $(".panel").hide();
-        $("#convert_button").hide();
-
-        $("#success_div").show("fade-in");
-        $('#progress_div').hide();
-    }
-
-
-    function get_convert_button(uid){
-        $("#convert_button").attr("href", $("#convert_button").attr("href") + uid);
-        $("#convert_button").show();
-        $(".panel").show();
-
-        $("#success_div").show("fade-in");
-        $('#progress_div').hide();
-    }
+    $('#success_div').hide();
+    $("#audio_div").hide();
+    $("video").hide();
+    $('#progress_div').hide();
 
 
-    function get_video_player(url){
-        $('#audio_div').show();
-        $('#video_player source').attr('src', url);
-    }
+    $('#convert_button').hide();
+    $('#modal_button').hide();
+    $(".panel").hide();
+    $('input[name=song_format_input]').val('mp3')
+  }
 
-    function get_progress(progress_url) {
-        $('#success_div').hide();
-        $('#progress_div').show();
+  function get_download_button(uid){
+    // alert('Adding to download button uid: ' + uid)
+    $('input[name=uid_input]').val(uid);
+    $("#modal_button").show();
 
-        var my_timer = setInterval(function() {
-            $.get( progress_url, function( progress_data ) {
-                var progress_percent = parseInt(progress_data.dl_progress)
-                javascript: console.log("[DONE] progress: " + progress_percent + "%");
-                $(".progress-bar").animate({ width: progress_percent+'%'}, 1);
+    $(".panel").hide();
+    $("#convert_button").hide();
 
-                if (parseInt(progress_percent) >= 100){
-                    javascript: console.log("Clearing interval...");
-                    clearInterval(my_timer);
-                    get_download_button(progress_data.uid);
-                }
-            })
+    $("#success_div").show("fade-in");
+    $('#progress_div').hide();
+  }
+
+
+  function get_convert_button(uid){
+    $("#convert_button").attr("href", $("#convert_button").attr("href") + uid);
+    $("#convert_button").show();
+    $(".panel").show();
+
+    $("#success_div").show("fade-in");
+    $('#progress_div').hide();
+  }
+
+
+  function get_video_player(url){
+    $('#audio_div').show();
+    $('#video_player source').attr('src', url);
+  }
+
+  function get_progress(progress_url) {
+    $('#success_div').hide();
+    $('#progress_div').show();
+
+    var my_timer = setInterval(function() {
+      $.get( progress_url, function( progress_data ) {
+        var progress_percent = parseInt(progress_data.dl_progress)
+        javascript: console.log("[DONE] progress: " + progress_percent + "%");
+        $(".progress-bar").animate({ width: progress_percent+'%'}, 1);
+
+        if (parseInt(progress_percent) >= 100){
+          javascript: console.log("Clearing interval...");
+          clearInterval(my_timer);
+          get_download_button(progress_data.uid);
+        }
+      })
             .fail( function (data) {
-                $('#button_check').show().html('Check');
-                // javascript: console.log("Failed to update download progress: " + data)
-                message_html = "<div class='alert alert-danger'><h2>Failed to update download progress bar.</h2></div>";
-                $('#message_div').html(message_html);
-            });
-        }, 5000);
-    }
+        $('#button_check').show().html('Check');
+        // javascript: console.log("Failed to update download progress: " + data)
+        message_html = "<div class='alert alert-danger'><h2>Failed to update download progress bar.</h2></div>";
+        $('#message_div').html(message_html);
+      });
+    }, 5000);
+  }
 
-    $("#convert_button").click(function(ev) {
-        ev.preventDefault();
-        var dl_url = $("#convert_button").attr("href")
+  $("#convert_button").click(function(ev) {
+    ev.preventDefault();
+    var dl_url = $("#convert_button").attr("href")
 
-        $.get( dl_url, function( dl_data ) {
-            get_progress(dl_data);
-        }).fail( function (data) {
-            $('#button_check').show().html('Check');
-            // javascript: console.log("Failed to convert video: " + data)
-            message_html = "<div class='alert alert-danger'><h2>Failed to convert video.</h2></div>";
-            $('#message_div').html(message_html);
-        });
-        return false;
+    $.get( dl_url, function( dl_data ) {
+      get_progress(dl_data);
+    }).fail( function (data) {
+      $('#button_check').show().html('Check');
+      // javascript: console.log("Failed to convert video: " + data)
+      message_html = "<div class='alert alert-danger'><h2>Failed to convert video.</h2></div>";
+      $('#message_div').html(message_html);
     });
+    return false;
+  });
 
-    $("#button_check").click(function(ev) {
-        ev.preventDefault();
-        // $('#message_div').html("");  
-        $('#button_check').html('<i class="icon-spinner icon-spin icon-large icon-1x"></i>');
+  $("#button_check").click(function(ev) {
+    ev.preventDefault();
+    // $('#message_div').html("");  
+    $('#button_check').html('<i class="icon-spinner icon-spin icon-large icon-1x"></i>');
 
-        var target = "{{ url_for('check') }}"
-        $.ajax({ // create an AJAX call...
-            data: $('#download_form').serialize(), // get the form data
-            type: $('#download_form').attr("method"),
-            url: target
-        }, "json")
-        .done(function(data) {
-            $('#button_check').show().html('Check');
-            // javascript: console.log("[DONE] Sucess getting video info: " + data.url);
-            // javascript: console.log("[DONE] Video ext: " + data.ext);
-            // javascript: console.log("[DONE] Video uid: " + data.uid);
-            // javascript: console.log("[DONE] Video uid: " + "<a href='{{ url_for('convert', uid='') }}'" + data.uid);
+    var target = "{{ url_for('check') }}"
+    $.ajax({ // create an AJAX call...
+      data: $('#download_form').serialize(), // get the form data
+      type: $('#download_form').attr("method"),
+      url: target
+    }, "json")
+      .done(function(data) {
+      $('#button_check').show().html('Check');
+      // javascript: console.log("[DONE] Sucess getting video info: " + data.url);
+      // javascript: console.log("[DONE] Video ext: " + data.ext);
+      // javascript: console.log("[DONE] Video uid: " + data.uid);
+      // javascript: console.log("[DONE] Video uid: " + "<a href='{{ url_for('convert', uid='') }}'" + data.uid);
 
-            get_convert_button(data.uid);
-            get_video_player(data.url);
-            $(".panel-title").text(data.stitle);
-            $(".panel-body").html("<img height='100%' width='100%' src='"+data.thumbnail+"'></img>");
-        })
-        .fail( function (data) {
-            $('#button_check').show().html('Check');
-            // javascript: console.log("Failed to get video info: " + data)
-            $('#button_convert').html("Download");
-            message_html = "<div class='alert alert-danger'><h2>Failed to fetch video info.</h2></div>";
-            $('#message_div').html(message_html);
-        });
-        return false;
+      get_convert_button(data.uid);
+                                                            get_video_player(data.url);
+                                                            $(".panel-title").text(data.stitle);
+                                                            $(".panel-body").html("<img height='100%' width='100%' src='"+data.thumbnail+"'></img>");
+    })
+      .fail( function (data) {
+      $('#button_check').show().html('Check');
+      // javascript: console.log("Failed to get video info: " + data)
+      $('#button_convert').html("Download");
+      message_html = "<div class='alert alert-danger'><h2>Failed to fetch video info.</h2></div>";
+      $('#message_div').html(message_html);
     });
+    return false;
+  });
 
-    $("#input_box").bind('change paste keyup', function() {
-        get_initial_state();
-    });
+  $("#input_box").bind('change paste keyup', function() {
+    get_initial_state();
+  });
 </script>
 {% endblock scripts %}
