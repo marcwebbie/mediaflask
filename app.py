@@ -80,9 +80,9 @@ def update_progress(morceaux, taille_morceau, taille_totale, uid=None):
                 'uid': uid,
                 'dl_progress': pourcent,
                 'convert_progress': 0,
-                'status': 'downloading',   # dowloading, converting, done
+                'status': 'downloading'
             }
-        cache.set(uid, json.dumps(json_report))
+            cache.set(uid, json.dumps(json_report))
 
 
 def create_tables():
