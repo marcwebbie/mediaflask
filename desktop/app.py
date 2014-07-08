@@ -21,8 +21,8 @@ class PlaylistDialog(Gtk.Dialog):
 
     def __init__(self, parent):
         Gtk.Dialog.__init__(self, "Playlist for download", parent, 0,
-                           (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                            Gtk.STOCK_OK, Gtk.ResponseType.OK))
+                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                             Gtk.STOCK_OK, Gtk.ResponseType.OK))
 
         self.set_default_size(640, 480)
 
@@ -201,8 +201,8 @@ class MediaFlask:
         else:
             dialog = Gtk.FileChooserDialog("Please choose a file", self.window,
                                            Gtk.FileChooserAction.SAVE,
-                                          (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                           Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
+                                           (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                            Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
 
             # self.add_filters(dialog)
             selected_iter = self.current_iter
@@ -222,11 +222,11 @@ class MediaFlask:
                     'album': self.store[selected_iter][4],
                 }
 
-            # artist = self.store[selected_iter][3]
                 raw_url = self.store[selected_iter][6]
                 rh = partial(self.report_hook, item_selected=selected_iter)
                 downloader.download(
                     raw_url, save_filename, export='mp3', bitrate='192', tags=tags, reporthook=rh)
+
             dialog.destroy()
 
     def on_tree_selection_changed(self, selection):
