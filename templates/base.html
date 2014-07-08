@@ -34,8 +34,8 @@
     {% endblock extra_head %}
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-      <script src="../../assets/js/html5shiv.js"></script>
-      <script src="../../assets/js/respond.min.js"></script>
+    <script src="../../assets/js/html5shiv.js"></script>
+    <script src="../../assets/js/respond.min.js"></script>
     <![endif]-->
 
   </head>
@@ -57,20 +57,20 @@
           </li>
         </ul>
       </div>
-    </div> 
+    </div>
 
     <!--     <div class="container"> -->
     {% block content %}
-      <div class='row'>
-        <form method="POST" action="[CHANGE ACTION]" accept-charset="UTF-8">
-          <div class='span3 input-append' style="margin-top:20%; margin-left:30%">
-            <input class="span2" style="width:400px;" type="text" placeholder="buscar...">
-          </div>
-        </form>
-      </div>
+    <div class='row'>
+      <form method="POST" action="[CHANGE ACTION]" accept-charset="UTF-8">
+        <div class='span3 input-append' style="margin-top:20%; margin-left:30%">
+          <input class="span2" style="width:400px;" type="text" placeholder="buscar...">
+        </div>
+      </form>
+    </div>
     {% endblock content %}
     <!--     </div> -->
-  
+
     <!-- Le javascript
     ==================================================-->
     <script src="{{ url_for('static', filename='js/jquery-1.9.1.min.js') }}" ></script>
