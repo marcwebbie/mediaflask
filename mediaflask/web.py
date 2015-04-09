@@ -12,7 +12,6 @@ from flask import (
     send_from_directory,
 )
 from werkzeug.contrib.cache import SimpleCache
-from werkzeug.urls import iri_to_uri
 from pydub import AudioSegment
 from slugify import slugify_unicode as slugify
 
@@ -20,7 +19,7 @@ from .utils import downloader
 from .audiofile import AudioFile
 
 app = Flask(__name__)
-# app.debug = True
+app.debug = False
 cache = SimpleCache()
 MEDIA_ROOT = os.path.expanduser("~/.mediaflask")
 
