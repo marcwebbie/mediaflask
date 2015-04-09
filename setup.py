@@ -3,7 +3,7 @@
 from setuptools import setup
 
 
-__version__ = "0.1"
+__version__ = "0.2"
 
 requirements = [pkg.strip() for pkg in open('requirements.txt').readlines()]
 
@@ -23,6 +23,10 @@ setup(
     packages=['mediaflask'],
     install_requires=requirements,
     test_suite='tests.test',
+    entry_points="""
+        [console_scripts]
+        mediaflask=mediaflask.web:main
+    """,
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',

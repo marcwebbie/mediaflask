@@ -4,26 +4,25 @@ import os
 import shutil
 import sys
 
-from flask import (Flask,
-                   Response,
-                   render_template,
-                   request,
-                   send_from_directory,
-                   send_file)
+from flask import (
+    Flask,
+    Response,
+    render_template,
+    request,
+    send_from_directory,
+)
 from werkzeug.contrib.cache import SimpleCache
 from werkzeug.urls import iri_to_uri
 from pydub import AudioSegment
-from slugify import slugify
+from slugify import slugify_unicode as slugify
 
-from utils import downloader
-from audiofile import AudioFile
-
+from .utils import downloader
+from .audiofile import AudioFile
 
 app = Flask(__name__)
+# app.debug = True
 cache = SimpleCache()
-
-PACKAGE_ROOT = os.path.dirname(os.path.abspath(__file__))
-MEDIA_ROOT = os.path.join(PACKAGE_ROOT, "media/")
+MEDIA_ROOT = os.path.expanduser("~/.mediaflask")
 
 
 def update_progress(downloaded_size, total_size):
@@ -62,13 +61,11 @@ def download():
             tags=audio_tags,
             id3v2_version='3'
         )
-        # import pdb; pdb.set_trace()
 
         return send_from_directory(
             MEDIA_ROOT,
-            audio_output_path,
+            os.path.basename(audio_output_path),
             as_attachment=True,
-            attachment_filename=iri_to_uri(os.path.basename(audio_output_path))
         )
 
 
@@ -91,7 +88,7 @@ def check():
         extension = info_dict['ext']
         raw_url = info_dict['url']
         thumbnail = info_dict["thumbnail"]
-        slug = slugify(title, to_lower=True)
+        slug = slugify(title)
         disk_path = os.path.join(MEDIA_ROOT, slug)
         audiofile = AudioFile(
             title=title,
@@ -121,12 +118,15 @@ def remove_media_dir(mediapath):
     shutil.rmtree(mediapath, ignore_errors=True)
 
 
-if __name__ == "__main__":
+def main():
     create_media_dir(MEDIA_ROOT)
-
     try:
         app.run(debug=True)
     except Exception as e:
         raise e
     finally:
         remove_media_dir(MEDIA_ROOT)
+
+
+if __name__ == "__main__":
+    main()
