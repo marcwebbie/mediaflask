@@ -15,8 +15,8 @@ from werkzeug.contrib.cache import SimpleCache
 from pydub import AudioSegment
 from slugify import slugify_unicode as slugify
 
-from .utils import downloader
-from .audiofile import AudioFile
+from mediaflask.utils import downloader
+from mediaflask.audiofile import AudioFile
 
 app = Flask(__name__)
 app.debug = False

@@ -3,7 +3,7 @@ import urllib
 import requests
 from youtube_dl import YoutubeDL
 
-from .decorators import async
+from mediaflask.utils.decorators import async
 
 
 BUF_SIZE = 1024
